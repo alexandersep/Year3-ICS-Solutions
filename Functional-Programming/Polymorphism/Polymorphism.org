@@ -1,0 +1,60 @@
+#+TITLE: Polymorphism/Polymorphism Restrictions
+#+AUTHOR: Silent
+#+OPTIONS: toc:nil date:nil ':t *:nil -:nil ::nil <:nil ^:til author:nil d:nil
+#+LATEX_HEADER: \usepackage[margin=0.85in]{geometry}
+* Polymorphism
+** Polymorphic function
+#+BEGIN_SRC haskell
+length :: [a] -> Int
+length [] = 0
+length (x:xs) = 1 + length xs
+#+END_SRC
+** Restrictions
+- These functions have a restriction
+  which forces them to only return their
+  parameters in special way to follow its type
+  signature.
+- These functions and their type signatures only
+  allow for one implementation in code
+#+BEGIN_SRC haskell
+id :: a -> a
+id x = x
+
+aToB :: a -> b
+aToB x = undefined
+aToB' :: a
+aToB' = undefined
+aToB'' :: a -> b -> c -> ...
+aToB'' x y ... = undefined
+
+const :: a -> b -> a
+const x _ = x
+
+seq :: a -> b -> b
+seq _ y = y
+
+hasTypeOf :: a -> a -> a
+hasTypeOf x y = x
+
+uncurry :: (a -> b -> c) -> (a,b) -> c
+uncurry f (x,y) = f x y
+
+curry :: ((a,b) -> c) -> a -> b -> c
+curry f x y = f (x,y)
+#+END_SRC
+#+BEGIN_SRC haskell
+flip :: (b -> a -> c) -> a -> b -> c
+flip f x y = f y x
+
+f1 :: a -> [a]
+f1 x = replicate 5 x
+
+-- Only possibility
+f3 :: a -> [b]
+f3 x = []
+
+-- Not as restrictive since "a" is a number,
+-- therefore we can map b to many more possibilities
+f4 :: (Num a) => a -> [b]
+f4 x = []
+#+END_SRC
