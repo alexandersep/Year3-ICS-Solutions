@@ -9,7 +9,7 @@ Exam papers can be found in https://cs-exams.com/docs/third-year
 
 ### Introduction to Functional Programming
 
-[Abstract Syntax Tree - AST](./AST) 
-[Higher Order Functions](./HOF)
-[Input and Output](./IO) 
+[Abstract Syntax Tree - AST](./AST)  
+[Higher Order Functions](./HOF)  
+[Input and Output](./IO)  
 [Laziness and Strictness](./Lazy-Strict)
