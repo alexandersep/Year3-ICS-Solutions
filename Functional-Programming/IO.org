@@ -1,0 +1,117 @@
+#+TITLE: Input and Ouput Exam Solutions
+#+AUTHOR: Alexander Sepelenco
+#+OPTIONS: toc:nil date:nil ':t *:nil -:nil ::nil <:nil ^:til author:nil d:nil
+#+LATEX_HEADER: \usepackage[margin=0.85in]{geometry}
+* 2021 Q3
+** Part (b)
+#+BEGIN_SRC haskell
+main :: IO ()
+main = do
+ emptyOutputFile -- reset SHOUT.log since we want a new file called SHOUT.log
+ file1Contents <- readFile "files.txt"
+ let listFiles = lines file1Contents
+ if listFiles == []
+     then return ()
+     else do
+         shoutIntoFile listFiles
+ where emptyOutputFile = writeFile "SHOUT.log" ""
+
+shoutIntoFile :: [FilePath] -> IO ()
+shoutIntoFile [] = return ()
+shoutIntoFile (xs:xss) = do
+ fileContent <- readFile xs
+ appendFile "SHOUT.log" . map (toUpper) $ fileContent
+ shoutIntoFile xss
+#+END_SRC
+\newpage
+* 2021 Q3
+** Part (c)
+#+BEGIN_SRC haskell
+main :: IO ()
+main = do
+ interleaves "input1.txt" "input2.txt"
+
+interleaves :: FilePath -> FilePath -> IO ()
+interleaves file1 file2 = do
+ file1Contents <- readFile file1
+ file2Contents <- readFile file2
+ let linesOfFile1 = lines file1Contents
+ let linesOfFile2 = lines file2Contents
+ writeFile "output12.txt" . unlines $ interleaves' [] linesOfFile1 linesOfFile2
+
+interleaves' :: [String] -> [String] -> [String] -> [String]
+interleaves' zss xss [] = zss ++ xss
+interleaves' zss [] yss = zss ++ yss
+interleaves' zss (xs:xss) (ys:yss) = (interleaves' $! accumulator) xss yss
+ where accumulator = zss ++ (xs : [ys])
+#+END_SRC
+* 2019 Q3
+** Part (c)
+#+BEGIN_SRC haskell
+main :: IO ()
+main = do
+  putStr "Input a file with the form <root.ext>: "
+  file <- getLine
+  fileContents <- readFile file
+  writeFile (outputFile file) . map (toLower) $ fileContents
+    where outputFile file = takeWhile (/='.') file ++ ".log"
+#+END_SRC
+\newpage
+* 2018 Q3
+** Part (c)
+#+BEGIN_SRC haskell
+toDOS :: FilePath -> FilePath
+toDOS file = map (toUpper) (take 8 fileName) ++ map (toUpper) (take 4 fileExtension)
+ where fileName      = takeWhile (/= '.') file
+       fileExtension = dropWhile (/= '.') file -- includes dot therefore take 4 == .DAT
+       eightFileName = take 8 fileName
+
+#+END_SRC
+** Part (d)
+#+BEGIN_SRC haskell
+main :: IO ()
+main = do
+ putStr "Input a fileName with an extension: "
+ file <- getLine
+ fileContents <- readFile . toDOS $ file
+ writeFile "LOWER.OUT" . map (toLower) $ fileContents
+#+END_SRC
+* 2015 Q3
+** Part (c)
+#+BEGIN_SRC haskell
+hash :: String -> Int
+hash str = (sum (map ord str)) `mod` 255
+
+main :: IO ()
+main = do
+ putStr "Input the name of your file without an extension: "
+ fileName <- getLine
+ fileContents <- readFile . inputFile $ fileName
+ writeFile (outputFile fileName) (show . hash $ fileContents)
+  where inputFile fileName  = fileName ++ ".in"
+        outputFile fileName = fileName ++ ".chk"
+#+END_SRC
+* 2014 Q4
+** Part (d)
+#+BEGIN_SRC haskell
+main = do
+ putStr "Input a filen of the form <Root>.<Extensions>: "
+ file <- getLine
+ let dosFile = toDOS file
+ dosFileContents <- readFile dosFile
+ writeFile ((take 8 dosFile) ++ ".OUT") . map (toLower) $ dosFileContents
+
+toDOS :: FilePath -> FilePath
+toDOS file = map (toUpper) dosNam ++ map (toUpper) dosExt
+ where dosNam = take 8 $ takeWhile (/= '.') file
+       dosExt = take 4 $ dropWhile (/= '.') file -- take 4 since . must be included
+#+END_SRC
+* 2013 Q4
+** Part (d)
+#+BEGIN_SRC haskell
+main = do
+ putStr "Input a filename without the extension: "
+ file <- getLine
+ fileContents <- readFile (file++".in")
+ writeFile (file++".out") . map (toUpper) $ fileContents
+#+END_SRC
