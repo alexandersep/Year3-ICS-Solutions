@@ -15,7 +15,7 @@ product (10:[13,0,42])     = 10 * product [13,0,42] -- third case
 10 * (13 * product (0:[42])) = 10 * (13 * 0) -- second case
 #+END_SRC
 #+ATTR_LATEX: :width 115mm
-[[~/Pictures/product-xs.png]]
+[[./product-xs.png]]
 * 2018 Q3
 ** Part (a)
 #+BEGIN_SRC haskell
@@ -28,7 +28,7 @@ length (3:[39])   = 1 + length [39] -- second case
 1 + (1 length [])   = 1 + (1 + 0) -- first case
 #+END_SRC
 #+ATTR_LATEX: :width 160mm
-[[~/Pictures/length-xs.png]]
+[[./length-xs.png]]
 * 2016 Q3
 ** Part (b)
 #+BEGIN_SRC haskell
@@ -42,7 +42,7 @@ prod (3:[14,0,999])    = 3 * prod [14,0,999] -- third case
 3 * (13 * product (0:[42])) = 3 * (14 * 0) -- second case
 #+END_SRC
 #+ATTR_LATEX: :width 155mm
-[[~/Pictures/prod-xs.png]]
+[[./prod-xs.png]]
 * 2015 Q4
 ** Part (a)
 #+BEGIN_SRC haskell
@@ -55,7 +55,7 @@ diffsq (2:[3])          = (2 * 2) - diffsq [3] -- second case
 (2 * 2) - ((3 * 3) - diffsq []) = (2 * 2) - ((3 * 3) - 0) -- first case
 #+END_SRC
 #+ATTR_LATEX: :width 160mm
-[[~/Pictures/diffsq-xs.png]]
+[[./diffsq-xs.png]]
 * 2014 Q4
 ** Part (a)
 #+BEGIN_SRC haskell
@@ -68,7 +68,7 @@ sum (3:[39])    = 3 + sum [39] -- second case
 3 + (39 + sum []) = 3 + (39 + 0) -- first case
 #+END_SRC
 #+ATTR_LATEX: :width 160mm
-[[~/Pictures/sum-xs.png]]
+[[./sum-xs.png]]
 \newpage
 * 2013 Q4
 ** Part (a)
@@ -82,4 +82,4 @@ sumsq (2:[3])           = (2 * 2) + diffsq [3] -- second case
 (2 * 2) + ((3 * 3) + sumsq []) = (2 * 2) + ((3 * 3) + 0) -- first case
 #+END_SRC
 #+ATTR_LATEX: :width 160mm
-[[~/Pictures/sumsq-xs.png]]
+[[./sumsq-xs.png]]
