@@ -85,7 +85,7 @@ take 2 (10 : quadup (10+4))
 10 : (10+4) : []
 -- We are done computing the list (Evaluatable)
 #+END_SRC
-\newpage
+#+LATEX: \newpage
 * 2018 Q3
 ** Part (b)
 *** Code
@@ -219,7 +219,7 @@ down n = n : down (n-1)
 take 0 xs = []
 take n (x:xs) x : take (n-1) xs
 #+END_SRC
-\newpage
+#+LATEX: \newpage
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
   evaluating from and it will never stop since from will generate

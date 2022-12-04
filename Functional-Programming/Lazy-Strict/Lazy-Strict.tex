@@ -1,0 +1,447 @@
+% Created 2022-12-04 Sun 20:52
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[margin=0.85in]{geometry}
+\date{}
+\title{Lazy and Strict Exam Solutions}
+\hypersetup{
+ pdfauthor={Silent},
+ pdftitle={Lazy and Strict Exam Solutions},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.2 (Org mode 9.6)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section{2021 Q3}
+\label{sec:orgde66d84}
+\subsection{Part (b)}
+\label{sec:org0bd0b8c}
+\subsubsection{Code}
+\label{sec:org02015c0}
+\begin{verbatim}
+from n = n : from (n+1)
+take 0 xs = []
+take n (x:xs) x : take (n-1) xs
+\end{verbatim}
+\subsubsection{Strict Evaluation}
+\label{sec:org63805f0}
+\begin{itemize}
+\item Strictness is forced to evaluate all expressions, it will start
+evaluating from and it will never stop since from will generate
+an infinite list.
+\end{itemize}
+\begin{verbatim}
+take 2 (from 42)
+take 2 (42 : from (42+1))
+take 2 (42 : from (43))
+take 2 (42 : 43 : from (43+1))
+take 2 (42 : 43 : from (44))
+take 2 (42 : 43 : 44 : from (44+1))
+take 2 (42 : 43 : 44 : from (45))
+...
+\end{verbatim}
+\subsubsection{Lazy Evaluation}
+\label{sec:org0fd0bf0}
+\begin{itemize}
+\item Laziness work on trying to delay computation as much as possible
+It will compute ``from'' and see that ``take'' now has enough arguments.
+``take'' will execute then it won't have enough arguments, then executes from
+again. ``from'' won't actually compute the result. It will pass it in memory
+which is called a thunk. Laziness in general uses more heap memory because of this.
+But the advantage is that it can deal with inifinite lists.
+\end{itemize}
+\begin{verbatim}
+take 2 (from 42)
+take 2 (42 : from (42+1))
+42 : (take (2-1) (from(42+1)))
+42 : (take 1 (from(42+1)))
+42 : (take 1 ((42+1) : from((42+1)+1)))
+42 : (42+1) : (take (1-1) (from(((42+1)+1)+1)))
+42 : (42+1) : (take 0 (from(((42+1)+1)+1)))
+42 : (42+1) : []
+-- We are done computing the list (Evaluatable)
+\end{verbatim}
+\section{2018 Q3}
+\label{sec:org52a73bd}
+\subsection{Part (b)}
+\label{sec:org14db308}
+\subsubsection{Code}
+\label{sec:org1baf795}
+\begin{verbatim}
+quadup n = n : quadup (n+4)
+take 0 xs = []
+take n (x:xs) x : take (n-1) xs
+\end{verbatim}
+\subsubsection{Strict Evaluation}
+\label{sec:org8965904}
+\begin{itemize}
+\item Strictness is forced to evaluate all expressions, it will start
+evaluating from and it will never stop since from will generate
+an infinite list.
+\end{itemize}
+\begin{verbatim}
+take 2 (quadup 10)
+take 2 (10 : quadup(10+4))
+take 2 (10 : quadup(14))
+take 2 (10 : 14 : quadup(14+4))
+take 2 (10 : 14 : quadup(14+4))
+take 2 (10 : 14 : quadup(18))
+take 2 (10 : 14 : 18 : quadup(18+4))
+take 2 (10 : 14 : 18 : quadup(22))
+...
+\end{verbatim}
+
+\subsubsection{Lazy Evaluation}
+\label{sec:org6db7d3c}
+\begin{itemize}
+\item Laziness work on trying to delay computation as much as possible
+It will compute ``quadup'' and see that ``take'' now has enough arguments.
+``take'' will execute then it won't have enough arguments, then it executes from
+again. ``quadup'' won't actually compute the result. It will pass it in memory
+which is called a thunk. Laziness in general uses more heap memory because of this.
+But the advantage is that it can deal with inifinite lists.
+\end{itemize}
+\begin{verbatim}
+take 2 (quadup 10)
+take 2 (10 : quadup (10+4))
+10 : (take (2-1) (quadup (10+4)))
+10 : (take 1 (quadup (10+4)))
+10 : (take 1 : ((10+4) : quadup ((10+4)+4))
+10 : (take 1 : ((10+4) : quadup ((10+4)+4))
+10 : (10+4) : (take (1-1) (quadup ((10+4)+4)))
+10 : (10+4) : (take 0 (quadup ((10+4)+4)))
+10 : (10+4) : []
+-- We are done computing the list (Evaluatable)
+\end{verbatim}
+\newpage
+\section{2018 Q3}
+\label{sec:org132144a}
+\subsection{Part (b)}
+\label{sec:org929667a}
+\subsubsection{Code}
+\label{sec:orge1cabbe}
+\begin{verbatim}
+evenup n = n : evenup (n+2)
+take 0 xs = []
+take n (x:xs) x : take (n-1) xs
+\end{verbatim}
+\subsubsection{Strict Evaluation}
+\label{sec:org6c6071f}
+\begin{itemize}
+\item Strictness is forced to evaluate all expressions, it will start
+evaluating from and it will never stop since from will generate
+an infinite list.
+\end{itemize}
+\begin{verbatim}
+take 2 (evenup 2)
+take 2 (2 : evenup(2+2))
+take 2 (2 : evenup(4))
+take 2 (2 : 4 : evenup(4+2))
+take 2 (2 : 4 : evenup(6))
+take 2 (2 : 4 : 6 : evenup(6+2))
+take 2 (2 : 4 : 6 : evenup(8))
+...
+\end{verbatim}
+\subsubsection{Lazy Evaluation}
+\label{sec:org052ff67}
+\begin{itemize}
+\item Laziness work on trying to delay computation as much as possible
+It will compute ``evenup'' and see that ``take'' now has enough arguments.
+``take'' will execute then it won't have enough arguments, then it executes from
+again. ``evenup'' won't actually compute the result. It will pass it in memory
+which is called a thunk. Laziness in general uses more heap memory because of this.
+But the advantage is that it can deal with inifinite lists.
+\end{itemize}
+\begin{verbatim}
+take 2 (evenup 2)
+take 2 (2 : evenup(2+2))
+2 : (take (2-1) (evenup(2+2)))
+2 : (take 1 (evenup(2+2)))
+2 : (take 1 ((2+2) : evenup(2+2))
+2 : (2+2) : (take (1-1) (evenup(2+2)))
+2 : (2+2) : (take 0 (evenup(2+2)))
+2 : (2+2) : []
+-- We are done computing the list (Evaluatable)
+\end{verbatim}
+\section{2015 Q4}
+\label{sec:org61dcac2}
+\subsection{Part (b)}
+\label{sec:org132aaed}
+\subsubsection{Code}
+\label{sec:orgd5a7c43}
+\begin{verbatim}
+zig n = n : zag (n-1)
+zag n = n : zig (n-1)
+take 0 xs = []
+take n (x:xs) x : take (n-1) xs
+\end{verbatim}
+\subsubsection{Strict Evaluation}
+\label{sec:org0d828b7}
+\begin{itemize}
+\item Strictness is forced to evaluate all expressions, it will start
+evaluating from and it will never stop since from will generate
+an infinite list. ``zig'' and ``zag'' do not have a base case, in strict
+languages it will never end even when going down to 0 and negative
+numbers
+\end{itemize}
+\begin{verbatim}
+take 2 (zig 20)
+take 2 (20 : zag (20-1))
+take 2 (20 : zag (19))
+take 2 (20 : 19 : zig (19-1))
+take 2 (20 : 19 : zig (18))
+take 2 (20 : 19 : 18 : zag (18-1))
+take 2 (20 : 19 : 18 : zag (17))
+...
+take 2 (20 : ... : 2 : 1 : zag (1-1))
+take 2 (20 : ... : 2 : 1 : zag 0)
+take 2 (20 : ... : 2 : 1 : 0 : zig (0-1))
+take 2 (20 : ... : 2 : 1 : 0 : zig (-1))
+take 2 (20 : ... : 2 : 1 : 0 : (-1) : zag (-1-1))
+take 2 (20 : ... : 2 : 1 : 0 : (-1) : zag (-2))
+...
+\end{verbatim}
+\subsubsection{Lazy Evaluation}
+\label{sec:orgc32f29c}
+\begin{itemize}
+\item Laziness work on trying to delay computation as much as possible
+It will compute ``zig'' and ``zag'' and see that ``take'' now has enough arguments.
+``take'' will execute then it won't have enough arguments, then it executes from
+again. ``zig'' and ``zag'' won't actually compute the result. It will pass it in memory
+which is called a thunk. Laziness in general uses more heap memory because of this.
+But the advantage is that it can deal with inifinite lists.
+\end{itemize}
+\begin{verbatim}
+take 2 (zig 20)
+take 2 (20 : zag (20-1))
+20 : (take (2-1) (zag(20-1)))
+20 : (take 1 (zag(20-1)))
+20 : (take 1 ((20-1) : zig(20-1))
+20 : (20-1) : (take (1-1) (zig(20-1)))
+20 : (20-1) : (take 0 (zig(20-1)))
+20 : (20-1) : []
+-- We are done computing the list (Evaluatable)
+\end{verbatim}
+\subsection{Part (c)}
+\label{sec:org6d44a8c}
+\subsubsection{Part (i)}
+\label{sec:orge25cc2e}
+\begin{verbatim}
+take 0 []
+\end{verbatim}
+\subsubsection{Part (ii)}
+\label{sec:org17e8ffe}
+\begin{itemize}
+\item Impossible, strict languages cannot evaluate more than
+what a lazy language can
+\end{itemize}
+\subsubsection{Part (iii)}
+\label{sec:orgfd323d0}
+\begin{verbatim}
+take 2 $ zig 20
+\end{verbatim}
+\subsubsection{Part (iv)}
+\label{sec:orgee51798}
+\begin{verbatim}
+zig 20
+\end{verbatim}
+\section{2014 Q4}
+\label{sec:orgbd5e8fc}
+\subsection{Part (b)}
+\label{sec:org885e4a6}
+\begin{itemize}
+\item Answer to paper is in 2018 Q3 (b)
+\end{itemize}
+\subsection{Part (c)}
+\label{sec:orgc0f7df6}
+\subsubsection{Part (i)}
+\label{sec:orgb3ecdd9}
+\begin{verbatim}
+evenup 2
+\end{verbatim}
+\subsubsection{Part (ii)}
+\label{sec:org7b3fa79}
+\begin{itemize}
+\item Impossible, strict languages cannot evaluate more than
+what a lazy language can
+\end{itemize}
+\subsubsection{Part (iii)}
+\label{sec:org63cda4f}
+\begin{verbatim}
+take 2 $ evenup 2
+\end{verbatim}
+\subsubsection{Part (iv)}
+\label{sec:org0de3d06}
+\begin{verbatim}
+take 0 []
+\end{verbatim}
+\section{2013 Q4}
+\label{sec:org2845637}
+\subsection{Part (b)}
+\label{sec:org5bee4e1}
+\subsubsection{Code}
+\label{sec:org3b6ee5a}
+\begin{verbatim}
+down n = n : down (n-1)
+take 0 xs = []
+take n (x:xs) x : take (n-1) xs
+\end{verbatim}
+\newpage
+\subsubsection{Strict Evaluation}
+\label{sec:org21ccd22}
+\begin{itemize}
+\item Strictness is forced to evaluate all expressions, it will start
+evaluating from and it will never stop since from will generate
+an infinite list. ``down'' will keep decrementing even past 0 and onto
+the negative numbers. There is no base case causing it to stop executing
+so a Strict language will continue executing down
+\end{itemize}
+\begin{verbatim}
+take 2 (down 42)
+take 2 (42 : down (42-1))
+take 2 (42 : down (41))
+take 2 (42 : 41 : down (41-1))
+take 2 (42 : 41 : down (40))
+take 2 (42 : 41 : 40 : down (40-1))
+take 2 (42 : 41 : 40 : down (39))
+...
+take 2 (42 : ... : 2 : 1 : down (1-1))
+take 2 (42 : ... : 2 : 1 : down 0)
+take 2 (42 : ... : 2 : 1 : 0 : down (0-1))
+take 2 (42 : ... : 2 : 1 : 0 : down (-1))
+take 2 (42 : ... : 2 : 1 : 0 : (-1) : down (-1-1))
+take 2 (42 : ... : 2 : 1 : 0 : (-1) : down (-2))
+...
+\end{verbatim}
+\subsubsection{Lazy Evaluation}
+\label{sec:org720641f}
+\begin{itemize}
+\item Laziness work on trying to delay computation as much as possible
+It will compute ``down'' and see that ``take'' now has enough arguments.
+``take'' will execute then it won't have enough arguments, then it executes from
+again. ``down'' won't actually compute the result. It will pass it in memory
+which is called a thunk. Laziness in general uses more heap memory because of this.
+But the advantage is that it can deal with inifinite lists.
+\end{itemize}
+\begin{verbatim}
+take 2 (down 42)
+take 2 (42 : zag (42-1))
+42 : (take (2-1) (zag(42-1)))
+42 : (take 1 (zag(42-1)))
+42 : (take 1 ((42-1) : zig((42-1)-1))
+42 : (42-1) : (take (1-1) (zig((42-1)-1)))
+42 : (42-1) : (take 0 (zig((42-1)-1)))
+42 : (42-1) : []
+-- We are done computing the list (Evaluatable)
+\end{verbatim}
+\subsection{Part (c)}
+\label{sec:org4dfd7a6}
+\subsubsection{Part (i)}
+\label{sec:org2357a2e}
+\begin{verbatim}
+take 0 []
+\end{verbatim}
+\subsubsection{Part (ii)}
+\label{sec:org7a906a8}
+\begin{itemize}
+\item Impossible, strict languages cannot evaluate more than
+what a lazy language can
+\end{itemize}
+\subsubsection{Part (iii)}
+\label{sec:org21d3304}
+\begin{verbatim}
+take 2 $ down 2
+\end{verbatim}
+\subsubsection{Part (iv)}
+\label{sec:orgfb14891}
+\begin{verbatim}
+down 42
+\end{verbatim}
+\section{2012 Q1}
+\label{sec:org300138e}
+\subsection{Part (d)}
+\label{sec:orgfb4dcf4}
+\subsubsection{Code}
+\label{sec:orgea14558}
+\begin{verbatim}
+up n = n : up (n+1)
+get 0 xs = []
+get 1 xs = []
+get n [] = []
+get n (x:xs) = x : get (n-2) xs
+\end{verbatim}
+\subsubsection{Strict Evaluation}
+\label{sec:orgbe182b5}
+\begin{itemize}
+\item Strictness is forced to evaluate all expressions, it will start
+evaluating from and it will never stop since from will generate
+an infinite list.
+\end{itemize}
+\begin{verbatim}
+take 2 (up 42)
+take 2 (42 : up (42+1))
+take 2 (42 : up (43))
+take 2 (42 : 43 : up (43+1))
+take 2 (42 : 43 : up (44))
+take 2 (42 : 43 : 44 : up (44+1))
+take 2 (42 : 43 : 44 : up (45))
+...
+\end{verbatim}
+\subsubsection{Lazy Evaluation}
+\label{sec:orgb49111f}
+\begin{itemize}
+\item Laziness work on trying to delay computation as much as possible
+It will compute ``up'' and see that ``get'' now has enough arguments.
+``get'' will execute then it won't have enough arguments, then it executes from
+again. ``up'' won't actually compute the result. It will pass it in memory
+which is called a thunk. Laziness in general uses more heap memory because of this.
+But the advantage is that it can deal with inifinite lists.
+\end{itemize}
+\begin{verbatim}
+get 4 (up 42)
+get 4 (42 : up (42+))
+42 : (get (4-2) (up(42+1)))
+42 : (get 2 (up(42+1)))
+42 : (get 2 ((42+1) : up((42+1)+1))
+42 : (42+1) : (get (2-2) (up((42+1)+1)))
+42 : (42+1) : (get 0 (up((42+1)+1)))
+42 : (42+1) : []
+-- We are done computing the list (Evaluatable)
+\end{verbatim}
+\subsection{Part (e)}
+\label{sec:orgc4c8626}
+\subsubsection{Part (i)}
+\label{sec:org50498dc}
+\begin{verbatim}
+get 0 []
+\end{verbatim}
+\subsubsection{Part (ii)}
+\label{sec:org5898961}
+\begin{itemize}
+\item Impossible, strict languages cannot evaluate more than
+what a lazy language can
+\end{itemize}
+\subsubsection{Part (iii)}
+\label{sec:orge2ba261}
+\begin{verbatim}
+get 4 $ up 42
+\end{verbatim}
+\subsubsection{Part (iv)}
+\label{sec:orgc4bdb3e}
+\begin{verbatim}
+up 42
+\end{verbatim}
+\end{document}

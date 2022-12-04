@@ -37,7 +37,7 @@ zipWith (+) (1 + 4) : (2 + 5) : hof [3,6]
 zipWith (+) (1 + 4) : (2 + 5) : (3 + 6) : hof []
 zipWith (+) (1 + 4) : (2 + 5) : (3 + 6) : []
 #+END_SRC
-\newpage
+#+LATEX: \newpage
 * 2021 Q1
 ** Part (a)
 #+BEGIN_SRC haskell
@@ -72,7 +72,7 @@ foldl (+) ((1 + 1) + 2) [3]
 foldl (+) (((1 + 1) + 2)+ 3) []
 foldl (+) (((1 + 1) + 2)+ 3) = 7
 #+END_SRC
-\newpage
+#+LATEX: \newpage
 * 2019 Q3
 ** Part (a) (i)
 #+BEGIN_SRC haskell
@@ -105,7 +105,7 @@ f3 = hof (+) 0
 f4 = hof (++) []
 f5 = hof (\x xs -> (x*x) + xs) 0
 #+END_SRC
-\newpage
+#+LATEX: \newpage
 * 2015 Q2
 ** Part (a)
 #+BEGIN_SRC haskell
@@ -145,7 +145,7 @@ f5 = hof (\x y -> x + y * y)
 #+END_SRC
 ** Part (c)
 - foldl
-\newpage
+#+LATEX: \newpage
 * 2016 Q2
 - Same Answer as in 2019 Q2 for parts (a) and (b)
 ** Part (c)
