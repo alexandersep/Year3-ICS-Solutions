@@ -1,0 +1,2 @@
+# Ignore .tex files (org mode autogenerates them)
+*.tex
