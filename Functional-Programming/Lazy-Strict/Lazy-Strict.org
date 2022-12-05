@@ -252,12 +252,12 @@ take 2 (42 : ... : 2 : 1 : 0 : (-1) : down (-2))
   But the advantage is that it can deal with inifinite lists.
 #+BEGIN_SRC haskell
 take 2 (down 42)
-take 2 (42 : zag (42-1))
-42 : (take (2-1) (zag(42-1)))
-42 : (take 1 (zag(42-1)))
-42 : (take 1 ((42-1) : zig((42-1)-1))
-42 : (42-1) : (take (1-1) (zig((42-1)-1)))
-42 : (42-1) : (take 0 (zig((42-1)-1)))
+take 2 (42 : down (42-1))
+42 : (take (2-1) (down(42-1)))
+42 : (take 1 (down(42-1)))
+42 : (take 1 ((42-1) : down((42-1)-1))
+42 : (42-1) : (take (1-1) (down((42-1)-1)))
+42 : (42-1) : (take 0 (down((42-1)-1)))
 42 : (42-1) : []
 -- We are done computing the list (Evaluatable)
 #+END_SRC
