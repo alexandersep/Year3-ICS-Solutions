@@ -53,7 +53,7 @@ main = do
   putStr "Input a file with the form <root.ext>: "
   file <- getLine
   fileContents <- readFile file
-  writeFile (outputFile file) $ map (toLower) . fileContents
+  writeFile (outputFile file) $ map (toLower) fileContents
     where outputFile file = takeWhile (/='.') file ++ ".log"
 #+END_SRC
 #+LATEX: \newpage
