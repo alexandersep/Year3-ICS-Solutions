@@ -1,5 +1,5 @@
 #+TITLE: AST Exam Solutions
-#+AUTHOR: Silent
+#+AUTHOR: Alexander Sepelenco
 #+OPTIONS: toc:nil date:nil ':t *:nil -:nil ::nil <:nil ^:til author:nil d:nil
 #+LATEX_HEADER: \usepackage[margin=0.85in]{geometry}
 * 2018 Q3
