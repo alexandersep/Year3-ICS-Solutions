@@ -20,7 +20,7 @@ shoutIntoFile :: [FilePath] -> IO ()
 shoutIntoFile [] = return ()
 shoutIntoFile (xs:xss) = do
  fileContent <- readFile xs
- appendFile "SHOUT.log" . map (toUpper) $ fileContent
+ appendFile "SHOUT.log" $ map (toUpper) fileContent
  shoutIntoFile xss
 #+END_SRC
 #+LATEX: \newpage
@@ -53,7 +53,7 @@ main = do
   putStr "Input a file with the form <root.ext>: "
   file <- getLine
   fileContents <- readFile file
-  writeFile (outputFile file) . map (toLower) $ fileContents
+  writeFile (outputFile file) $ map (toLower) . fileContents
     where outputFile file = takeWhile (/='.') file ++ ".log"
 #+END_SRC
 #+LATEX: \newpage
@@ -74,7 +74,7 @@ main = do
  putStr "Input a fileName with an extension: "
  file <- getLine
  fileContents <- readFile . toDOS $ file
- writeFile "LOWER.OUT" . map (toLower) $ fileContents
+ writeFile "LOWER.OUT" $ map (toLower) fileContents
 #+END_SRC
 * 2015 Q3
 ** Part (c)
@@ -99,7 +99,7 @@ main = do
  file <- getLine
  let dosFile = toDOS file
  dosFileContents <- readFile dosFile
- writeFile ((take 8 dosFile) ++ ".OUT") . map (toLower) $ dosFileContents
+ writeFile ((take 8 dosFile) ++ ".OUT") $ map (toLower) dosFileContents
 
 toDOS :: FilePath -> FilePath
 toDOS file = map (toUpper) dosNam ++ map (toUpper) dosExt
@@ -113,5 +113,5 @@ main = do
  putStr "Input a filename without the extension: "
  file <- getLine
  fileContents <- readFile (file++".in")
- writeFile (file++".out") . map (toUpper) $ fileContents
+ writeFile (file++".out") $ map (toUpper) fileContents
 #+END_SRC
