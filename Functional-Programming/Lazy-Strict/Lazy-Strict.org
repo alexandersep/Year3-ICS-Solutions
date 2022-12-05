@@ -12,7 +12,7 @@ take n (x:xs) x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
-  evaluating from and it will never stop since from will generate
+  evaluating "from" and it will never stop since "from" will generate
   an infinite list.
 #+BEGIN_SRC haskell
 take 2 (from 42)
@@ -27,7 +27,7 @@ take 2 (42 : 43 : 44 : from (45))
 *** Lazy Evaluation
 - Laziness work on trying to delay computation as much as possible
   It will compute "from" and see that "take" now has enough arguments.
-  "take" will execute then it won't have enough arguments, then executes from
+  "take" will execute then it won't have enough arguments, then executes "from"
   again. "from" won't actually compute the result. It will pass it in memory
   which is called a thunk. Laziness in general uses more heap memory because of this.
   But the advantage is that it can deal with inifinite lists.
@@ -52,7 +52,7 @@ take n (x:xs) x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
-  evaluating from and it will never stop since from will generate
+  evaluating "quadup" and it will never stop since "quadup" will generate
   an infinite list.
 #+BEGIN_SRC haskell
 take 2 (quadup 10)
@@ -69,7 +69,7 @@ take 2 (10 : 14 : 18 : quadup(22))
 *** Lazy Evaluation
 - Laziness work on trying to delay computation as much as possible
   It will compute "quadup" and see that "take" now has enough arguments.
-  "take" will execute then it won't have enough arguments, then it executes from
+  "take" will execute then it won't have enough arguments, then it executes "quadup"
   again. "quadup" won't actually compute the result. It will pass it in memory
   which is called a thunk. Laziness in general uses more heap memory because of this.
   But the advantage is that it can deal with inifinite lists.
@@ -96,7 +96,7 @@ take n (x:xs) x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
-  evaluating from and it will never stop since from will generate
+  evaluating "evenup" and it will never stop since "evenup" will generate
   an infinite list.
 #+BEGIN_SRC haskell
 take 2 (evenup 2)
@@ -111,7 +111,7 @@ take 2 (2 : 4 : 6 : evenup(8))
 *** Lazy Evaluation
 - Laziness work on trying to delay computation as much as possible
   It will compute "evenup" and see that "take" now has enough arguments.
-  "take" will execute then it won't have enough arguments, then it executes from
+  "take" will execute then it won't have enough arguments, then it executes "evenup"
   again. "evenup" won't actually compute the result. It will pass it in memory
   which is called a thunk. Laziness in general uses more heap memory because of this.
   But the advantage is that it can deal with inifinite lists.
@@ -137,7 +137,7 @@ take n (x:xs) x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
-  evaluating from and it will never stop since from will generate
+  evaluating "zig" and "zag" it will never stop since "zig" and "zag" will generate
   an infinite list. "zig" and "zag" do not have a base case, in strict
   languages it will never end even when going down to 0 and negative
   numbers
@@ -161,7 +161,7 @@ take 2 (20 : ... : 2 : 1 : 0 : (-1) : zag (-2))
 *** Lazy Evaluation
 - Laziness work on trying to delay computation as much as possible
   It will compute "zig" and "zag" and see that "take" now has enough arguments.
-  "take" will execute then it won't have enough arguments, then it executes from
+  "take" will execute then it won't have enough arguments, then it executes "zig" and "zag"
   again. "zig" and "zag" won't actually compute the result. It will pass it in memory
   which is called a thunk. Laziness in general uses more heap memory because of this.
   But the advantage is that it can deal with inifinite lists.
@@ -222,7 +222,7 @@ take n (x:xs) x : take (n-1) xs
 #+LATEX: \newpage
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
-  evaluating from and it will never stop since from will generate
+  evaluating "down" and it will never stop since "down" will generate
   an infinite list. "down" will keep decrementing even past 0 and onto
   the negative numbers. There is no base case causing it to stop executing
   so a Strict language will continue executing down
@@ -246,7 +246,7 @@ take 2 (42 : ... : 2 : 1 : 0 : (-1) : down (-2))
 *** Lazy Evaluation
 - Laziness work on trying to delay computation as much as possible
   It will compute "down" and see that "take" now has enough arguments.
-  "take" will execute then it won't have enough arguments, then it executes from
+  "take" will execute then it won't have enough arguments, then it executes "down"
   again. "down" won't actually compute the result. It will pass it in memory
   which is called a thunk. Laziness in general uses more heap memory because of this.
   But the advantage is that it can deal with inifinite lists.
@@ -289,7 +289,7 @@ get n (x:xs) = x : get (n-2) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
-  evaluating from and it will never stop since from will generate
+  evaluating "up" and it will never stop since "up" will generate
   an infinite list.
 #+BEGIN_SRC haskell
 take 2 (up 42)
@@ -304,7 +304,7 @@ take 2 (42 : 43 : 44 : up (45))
 *** Lazy Evaluation
 - Laziness work on trying to delay computation as much as possible
   It will compute "up" and see that "get" now has enough arguments.
-  "get" will execute then it won't have enough arguments, then it executes from
+  "get" will execute then it won't have enough arguments, then it executes "up"
   again. "up" won't actually compute the result. It will pass it in memory
   which is called a thunk. Laziness in general uses more heap memory because of this.
   But the advantage is that it can deal with inifinite lists.
