@@ -2,7 +2,6 @@
 #+AUTHOR: Alexander Sepelenco
 #+OPTIONS: toc:nil date:nil ':t *:nil -:nil ::nil <:nil ^:til author:nil d:nil
 #+LATEX_HEADER: \usepackage[margin=0.85in]{geometry}
-
 * 2021 Q1
 ** Part (a)
 #+BEGIN_SRC haskell

@@ -64,8 +64,6 @@ toDOS :: FilePath -> FilePath
 toDOS file = map (toUpper) (take 8 fileName) ++ map (toUpper) (take 4 fileExtension)
  where fileName      = takeWhile (/= '.') file
        fileExtension = dropWhile (/= '.') file -- includes dot therefore take 4 == .DAT
-       eightFileName = take 8 fileName
-
 #+END_SRC
 ** Part (d)
 #+BEGIN_SRC haskell
