@@ -93,7 +93,7 @@ main = do
 ** Part (d)
 #+BEGIN_SRC haskell
 main = do
- putStr "Input a filen of the form <Root>.<Extensions>: "
+ putStr "Input a file in of the form <Root>.<Extensions>: "
  file <- getLine
  let dosFile = toDOS file
  dosFileContents <- readFile dosFile
