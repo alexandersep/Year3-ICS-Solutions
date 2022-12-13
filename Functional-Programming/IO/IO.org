@@ -45,6 +45,24 @@ interleaves' zss [] yss = zss ++ yss
 interleaves' zss (xs:xss) (ys:yss) = (interleaves' $! accumulator) xss yss
  where accumulator = zss ++ (xs : [ys])
 #+END_SRC
+- More efficient implementation using intercalate, strict evaluation.
+#+BEGIN_SRC haskell
+import Data.List (intercalate)
+
+main :: IO ()
+main = do
+  file1Contents <- readFile "input1.txt"
+  file2Contents <- readFile "input2.txt"
+  let linesOfFile1 = lines file1Contents
+  let linesOfFile2 = lines file2Contents
+  writeFile "output12.txt" $ interleaveLines linesOfFile1 linesOfFile2
+
+interleaveLines :: [String] -> [String] -> String
+interleaveLines [] ys = intercalate "\n" ys
+interleaveLines xs [] = intercalate "\n" xs
+interleaveLines (x:xs) (y:ys) = intercalate "\n" $! x : y : [interleaveLines xs ys]
+#+END_SRC
+#+LATEX: \newpage
 * 2019 Q3
 ** Part (c)
 #+BEGIN_SRC haskell
@@ -56,7 +74,6 @@ main = do
   writeFile (outputFile file) $ map (toLower) fileContents
     where outputFile file = takeWhile (/='.') file ++ ".log"
 #+END_SRC
-#+LATEX: \newpage
 * 2018 Q3
 ** Part (c)
 #+BEGIN_SRC haskell
@@ -89,6 +106,7 @@ main = do
   where inputFile fileName  = fileName ++ ".in"
         outputFile fileName = fileName ++ ".chk"
 #+END_SRC
+#+LATEX: \newpage
 * 2014 Q4
 ** Part (d)
 #+BEGIN_SRC haskell
