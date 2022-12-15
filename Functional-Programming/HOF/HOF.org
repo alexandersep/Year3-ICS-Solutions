@@ -81,11 +81,11 @@ hof op e (x:xs) = x `op` hof op e xs
 #+END_SRC
 ** Part (b) (ii)
 #+BEGIN_SRC haskell
-f1 = hof 42 (*)
-f2 = hof 0 (\x y -> 99 * y)
-f3 = hof 0 (+)
-f4 = hof [] (++)
-f5 = hof 0 (\x xs -> (x-42) + xs)
+f1 = hof (*) 42
+f2 = hof (\x y -> 99 * y) 0
+f3 = hof (+) 0
+f4 = hof (++) []
+f5 = hof (\x _ -> x-42) 0
 #+END_SRC
 * 2017 Q2
 - Same Answer as in 2019 Q3
@@ -99,10 +99,10 @@ hof op e (x:xs) = x `op` hof op e xs
 ** Part (b)
 #+BEGIN_SRC haskell
 f1 = hof (*) 1
-f2 = hof (\_ xs -> 1 + xs) 0
+f2 = hof (\_ ys -> 1+ys) 0
 f3 = hof (+) 0
 f4 = hof (++) []
-f5 = hof (\x xs -> (x*x) + xs) 0
+f5 = hof (\x ys -> (x*x)+ys) 0
 #+END_SRC
 #+LATEX: \newpage
 * 2015 Q2
