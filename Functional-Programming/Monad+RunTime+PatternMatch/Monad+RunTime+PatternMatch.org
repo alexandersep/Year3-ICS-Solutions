@@ -68,7 +68,7 @@ lkp s ((s1,b):ds)
    a pattern match error.
 ** Part (c)
 #+BEGIN_SRC haskell
-eval :: (Monad m, MonadFail m)  => Dict -> Prop -> m Bool
+beval :: (Monad m, MonadFail m)  => Dict -> Prop -> m Bool
 beval _ (B b) = return b
 beval d (P s) = do
     case lkp s d of
