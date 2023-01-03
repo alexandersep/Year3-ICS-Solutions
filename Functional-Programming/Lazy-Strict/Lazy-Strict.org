@@ -8,7 +8,7 @@
 #+BEGIN_SRC haskell
 from n = n : from (n+1)
 take 0 xs = []
-take n (x:xs) x : take (n-1) xs
+take n (x:xs) = x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
@@ -48,7 +48,7 @@ take 2 (42 : from (42+1))
 #+BEGIN_SRC haskell
 quadup n = n : quadup (n+4)
 take 0 xs = []
-take n (x:xs) x : take (n-1) xs
+take n (x:xs) = x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
@@ -92,7 +92,7 @@ take 2 (10 : quadup (10+4))
 #+BEGIN_SRC haskell
 evenup n = n : evenup (n+2)
 take 0 xs = []
-take n (x:xs) x : take (n-1) xs
+take n (x:xs) = x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
@@ -133,7 +133,7 @@ take 2 (2 : evenup(2+2))
 zig n = n : zag (n-1)
 zag n = n : zig (n-1)
 take 0 xs = []
-take n (x:xs) x : take (n-1) xs
+take n (x:xs) = x : take (n-1) xs
 #+END_SRC
 *** Strict Evaluation
 - Strictness is forced to evaluate all expressions, it will start
@@ -217,7 +217,7 @@ take 0 []
 #+BEGIN_SRC haskell
 down n = n : down (n-1)
 take 0 xs = []
-take n (x:xs) x : take (n-1) xs
+take n (x:xs) = x : take (n-1) xs
 #+END_SRC
 #+LATEX: \newpage
 *** Strict Evaluation

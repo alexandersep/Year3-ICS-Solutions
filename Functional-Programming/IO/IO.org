@@ -99,8 +99,8 @@ main = do
  fileContents <- readFile . toDOS $ file
  writeFile "LOWER.OUT" $ map (toLower) fileContents
 #+END_SRC
-* 2015 Q3
-** Part (c)
+* 2015 Q4
+** Part (d)
 #+BEGIN_SRC haskell
 hash :: String -> Int
 hash str = (sum (map ord str)) `mod` 255
