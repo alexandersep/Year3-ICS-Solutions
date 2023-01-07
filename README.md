@@ -3,6 +3,12 @@
 Juniour Sophister solutions to exam papers.
 Exam papers can be found in https://cs-exams.com/docs/third-year 
 
+## Issues
+* If you spot any issues, consider forking this project and creating a pull request,
+  I'll add the fix in when I can. 
+* If you want to contribute solutions to this repository you can as well, I'll add it
+  in as well. 
+
 ## Structure
 
 * Solutions are split into topics
