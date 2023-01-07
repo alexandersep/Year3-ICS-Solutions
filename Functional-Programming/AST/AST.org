@@ -25,7 +25,7 @@ length [3,39]
 
 length (3:[39])   = 1 + length [39] -- second case
 1 + length ([39]) = 1 + (1 + length []) -- second case
-1 + (1 length [])   = 1 + (1 + 0) -- first case
+1 + (1 length []) = 1 + (1 + 0) -- first case
 #+END_SRC
 #+ATTR_LATEX: :width 160mm
 [[./length-xs.png]]
@@ -37,8 +37,8 @@ prod (0:_)  = 0
 prod (x:xs) = x * product xs
 prod [3,14,0,999]
 
-prod (3:[14,0,999])    = 3 * prod [14,0,999] -- third case
-3 * product (13:[0,42])   = 3 * (14 * prod [0,42]) -- third case
+prod (3:[14,0,999])     = 3 * prod [14,0,999] -- third case
+3 * product (13:[0,42]) = 3 * (14 * prod [0,42]) -- third case
 3 * (13 * product (0:[42])) = 3 * (14 * 0) -- second case
 #+END_SRC
 #+ATTR_LATEX: :width 155mm
@@ -71,15 +71,26 @@ sum (3:[39])    = 3 + sum [39] -- second case
 [[./sum-xs.png]]
 #+LATEX: \newpage
 * 2013 Q4
+** Notes
+- The `sum(x:xs) = x * x + sumsq` example is not entirely correct
+  the RHS of that part, should contain the x's and xs
+#+BEGIN_SRC txt
++ | @
+    | sumsq
+    | xs
+  | *
+    | x
+    | x
+#+END_SRC
 ** Part (a)
 #+BEGIN_SRC haskell
 sumsq []     = 0
 sumsq (x:xs) = x * x - diffsq xs
 sumsq [2,3]
 
-sumsq (2:[3])           = (2 * 2) + diffsq [3] -- second case
+sumsq (2:[3])          = (2 * 2) + diffsq [3] -- second case
 (2 * 2) + sumsq (3:[]) = (2 * 2) + ((3 * 3) + sumsq []) -- second case
 (2 * 2) + ((3 * 3) + sumsq []) = (2 * 2) + ((3 * 3) + 0) -- first case
 #+END_SRC
-#+ATTR_LATEX: :width 160mm
+#+ATTR_LATEX: :width 130mm
 [[./sumsq-xs.png]]

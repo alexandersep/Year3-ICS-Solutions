@@ -2,25 +2,29 @@
 #+AUTHOR: Alexander Sepelenco
 #+OPTIONS: toc:nil date:nil ':t *:nil -:nil ::nil <:nil ^:til author:nil d:nil
 #+LATEX_HEADER: \usepackage[margin=0.85in]{geometry}
+* Notes
+- I give the type signatures for you as the reader to reason. Type signatures are not mandatory in Haskell
+  they will be inferred, so giving the type of *main* for example, isn't needed.
 * 2021 Q3
 ** Part (b)
 #+BEGIN_SRC haskell
+outputFile :: FilePath
+outputFile = "SHOUT.log"
+
 main :: IO ()
 main = do
- emptyOutputFile -- reset SHOUT.log since we want a new file called SHOUT.log
+ writeFile outputFile "" -- reset outputFile since we want a new file called outputFile
  file1Contents <- readFile "files.txt"
  let listFiles = lines file1Contents
  if listFiles == []
      then return ()
-     else do
-         shoutIntoFile listFiles
- where emptyOutputFile = writeFile "SHOUT.log" ""
+     else shoutIntoFile listFiles
 
 shoutIntoFile :: [FilePath] -> IO ()
 shoutIntoFile [] = return ()
 shoutIntoFile (xs:xss) = do
  fileContent <- readFile xs
- appendFile "SHOUT.log" $ map (toUpper) fileContent
+ appendFile outputFile $ map (toUpper) fileContent
  shoutIntoFile xss
 #+END_SRC
 #+LATEX: \newpage
@@ -126,7 +130,7 @@ main = do
  writeFile ((take 8 dosFile) ++ ".OUT") $ map (toLower) dosFileContents
 
 toDOS :: FilePath -> FilePath
-toDOS file = map (toUpper) dosNam ++ map (toUpper) dosExt
+toDOS file = map (toUpper) dosNam ++ dosExt
  where dosNam = take 8 $ takeWhile (/= '.') file
        dosExt = take 4 $ dropWhile (/= '.') file -- take 4 since . must be included
 #+END_SRC
