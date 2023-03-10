@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <immintrin.h>
 
 int compute(int* array, int SIZE) {
@@ -6,7 +7,7 @@ int compute(int* array, int SIZE) {
     __m128i v4max = _mm_setzero_si128();
     int i;
     for(i = 0; i < SIZE - 3; i+=4) {
-        __m128i v4array = _mm_load_si128((__m128i*)&(array[i]));
+        __m128i v4array = _mm_loadu_si128((__m128i*)&(array[i]));
         v4max = _mm_max_epi32(v4array, v4max);
     }
     // select the maximum value which is in one of the four lanes in v4max
@@ -22,12 +23,12 @@ int compute(int* array, int SIZE) {
 
 int main() {
     const int SIZE = 4; 
-    int*  array = (int *)_mm_malloc(sizeof(int) * SIZE, 16);
+    int*  array = malloc(sizeof(int) * SIZE);
     array[0] = 0;
     array[1] = 2;
     array[2] = 7;
     array[3] = 3;
     printf("max is %d\n", compute(array,SIZE));
-    _mm_free(array);
+    free(array);
     return 0;
 }

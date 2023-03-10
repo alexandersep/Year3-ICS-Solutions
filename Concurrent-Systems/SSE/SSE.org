@@ -122,7 +122,254 @@ bool strcmp_sse(char* string1, char* string2, int strlength) {
 #+END_SRC
 * 2017 Q1
 ** Part (b)
-TODO
+*** Code Segment 1
+- This code is vectorisable, there are no
+  data dependencies in each iteration so using
+  SSE to do this four steps at a time is doable.
+- The approach is to break the code to two parts,
+  the first part does the multiples of four, and
+  the remaining elements that are not divisible by
+  four will have a posloop such as the one given in
+  the question.
+- Load your constants before the loop to avoid reloading.
+  These constants are PI, and ONE.
+- load first four values to vector, multiply it by itself,
+  divide by a vector of v4ONE / v4aMulv4a
+- Finally add the result with v4PI, and store it to the resulting
+  b array.
+- The assumptions of this programme is that b and a are at least 1024
+  elements. And if b is larger the resulting array will not be written
+  to so elements above 1024 could result in undefiend behaviour if not
+  set before calling function.
+#+BEGIN_SRC c
+void compute(float* a, float* b) {
+    const float PI = 3.14159;
+    const float ONE = 1.0;
+    __m128 v4PI = _mm_set1_ps(PI); // set four lanes to PI
+    __m128 v4ONE = _mm_set1_ps(ONE); // set four lanes to ONE
+    int i;
+    for (i = 0; i < 1021; i+=4) { // i < 1024 - 3 = 1021
+        __m128 v4a = _mm_loadu_ps(a+i); // load the next four location in a
+        __m128 v4aMulv4a = _mm_mul_ps(v4a, v4a); // multiply v4a with itself
+        __m128 v4ONE_div_v4aMulv4a = _mm_div_ps(v4ONE, v4aMulv4a); // v4ONE / (v4a * v4a)
+        __m128 v4b = _mm_add_ps(v4ONE_div_v4aMulv4a,v4PI); // divAns + PI
+        _mm_store_ps(b+i, v4b);
+    }
+    // postloop not required as 1024 % 4 == 0
+}
+#+END_SRC
+*** Code Segment 2
+- This code can be vectorised using SSE
+- The strategy is utilizing the max intrinsic
+  and finding the maximum of every 4 new elements
+  of the array using vectors.
+- Finally one of the lanes will have the correct maximum
+  value out of every element, extract it using max again
+  and a few specific shuffles and extract the first lane.
+  This will have the maximum.
+- A postloop will finish off the array if the array isn't
+  divisible by 4 and 1 element. The reason is because we are
+  actually starting the vectorisation at i = 1.
+#+BEGIN_SRC c
+float find_max(float* array, int size) {
+    __m128 v4max = _mm_load1_ps(array); // load first four values
+    const int size_minus_three = size - 3;
+    int i;
+    for (i = 1; i < size_minus_three; i+=4) {
+        __m128 v4array = _mm_loadu_ps(array+i);
+        v4max = _mm_max_ps(v4array, v4max);
+    }
+    v4max = _mm_max_ps(v4max, _mm_shuffle_ps(v4max, v4max, _MM_SHUFFLE(0,0,3,2)));
+    v4max = _mm_max_ps(v4max, _mm_shuffle_ps(v4max, v4max, _MM_SHUFFLE(0,0,0,1)));
+    float max = _mm_cvtss_f32(v4max);
+    // i = i;
+    for (; i < size; i++) {
+        if (array[i] > max) {
+            max = array[i];
+        }
+    }
+    return max;
+}
+#+END_SRC
+*** Code Segment 3
+- This code can be vectorised.
+- The approach in vectorising this code is to think vertically instead
+  of horizonatally. Load a vector of 4 pixels ignoring the last value,
+  since my approach does not utilize the 4th lane as a pixel.
+- Add together the 4 lanes each time, in practice this will do something the
+  likes of
+#+BEGIN_SRC c
+[   0     ,      0     ,     0      ,     0     ]  // ignore last 0
+[pixels[i], pixels[i+1], pixels[i+2], pixels[i+3]] // ignore pixels[i+3]
+// ------------------------------------------------------ // add them together vertically
+// while loop, do the same against the next pixels and the answer of the add computation.
+#+END_SRC
+- Once finished computing the vertical additions of the three rgb pixels,
+  shuffle them in a way where we take out the first 3 pixels, red, green, and blue
+  and then we vertically multiply them after doing the shuffle, and taking the first value
+  using _mm_cvtss_f32, this would be our sum product of the 3 pixels.
+#+BEGIN_SRC c
+float rgb_sum_product(float* pixels) {
+    __m128 v4sum_pixels = _mm_setzero_ps();
+    // array must be divisible by 3, and length 1011, last value of v4sum_pixels is undefined
+    for (int i = 0; i < 1011; i+=3) {
+        __m128 v4pixelsi = _mm_loadu_ps(pixels+i); // first three pixels only matter
+        v4sum_pixels = _mm_add_ps(v4pixelsi, v4sum_pixels);
+    }
+    __m128 v4product_pixels = _mm_mul_ps(v4sum_pixels,
+                                         _mm_shuffle_ps(v4sum_pixels,
+                                                        v4sum_pixels, _MM_SHUFFLE(0, 3, 2, 1)));
+    v4product_pixels = _mm_mul_ps(v4product_pixels,
+                                  _mm_shuffle_ps(v4sum_pixels,
+                                                 v4sum_pixels, _MM_SHUFFLE(1, 0, 3, 2)));
+    return _mm_cvtss_f32(v4product_pixels);
+}
+#+END_SRC
+*** Code Segment 4
+- This code can be vectorised.
+- Your inner for loop will do the matrix sum 4 at a time,
+  eventually you'll reach the end of the matrix row so you
+  need to exit inner loop. After you exit it your v4sum vector
+  should have the 4 sums of your loop computation, you horizonatlly
+  add them together in order to retrieve the input and you repeat
+  it for 4096 times to get all the answers to result[i].
+- The difficulty in this problem was to break the problem in a way
+  to vertically think about the problem instead of horizontally, the
+  lack of data dependencies allowed for this SSE approach
+#+BEGIN_SRC c
+// An efficient way of summing up a vector
+// More efficient than doing hadd twice and getting the
+// first element
+// equivalent to
+/*
+v4a = _mm_hadd_ps(v4a);
+v4a = _mm_hadd_ps(v4a);
+return _mm_cvtss_f32(v4a);
+*/
+static inline float hsum_ps_sse3(__m128 v4a) {
+    __m128 shuf = _mm_movehdup_ps(v4a);
+    __m128 sums = _mm_add_ps(v4a, shuf);
+    shuf        = _mm_movehl_ps(shuf, sums);
+    sums        = _mm_add_ss(sums, shuf);
+    return _mm_cvtss_f32(sums);
+}
+
+void multiply(float ** restrict matrix, float * restrict vec, float * restrict result) {
+    for (int i = 0; i < 4096; i++) {
+        __m128 v4sum = _mm_setzero_ps();
+        for (int j = 0; j < 4093; j+=4) { // i < 4096 - 3 since j+=4
+            __m128 v4vecj = _mm_loadu_ps(&(vec[j]));
+            __m128 v4matrixij = _mm_loadu_ps(&(matrix[i][j]));
+            __m128 v4vecj_mul_v4matrixij = _mm_mul_ps(v4vecj, v4matrixij);
+            v4sum = _mm_add_ps(v4sum, v4vecj_mul_v4matrixij);
+        }
+        result[i] = hsum_ps_sse3(v4sum); // efficient horiztonal sum vector
+    }
+}
+#+END_SRC
 * 2016 Q1
 ** Part (c)
-TODO
+*** Code Segment 1
+- This can is vectorisable
+- Since there aren't any dependencies
+  when writing to a, as we're not reading
+  it's previous contents, we can split our
+  work to four at a time using SSE, we using
+  loading, multiplication, addition, and storing
+  the four results back into a.
+  - You must remember that BIMDAS rule, and you must
+    multiply before adding, and my code below does just that.
+- A postloop is not required as 1024 is divisible by 4
+#+BEGIN_SRC c
+void add_scaled(float* a, float* b, float* c, float factor) {
+    __m128 v4factor = _mm_set1_ps(factor);
+    for (int i = 0; i < 1024; i+=4) { // postloop not needed since arrays % 4
+        __m128 v4b = _mm_loadu_ps(b+i);
+        __m128 v4c = _mm_loadu_ps(c+i);
+        __m128 v4c_mul_v4factor = _mm_mul_ps(v4c, v4factor);
+        __m128 result = _mm_add_ps(v4b, v4c_mul_v4factor);
+        _mm_storeu_ps(a+i, result);
+    }
+}
+#+END_SRC
+
+*** Code Segment 2
+- This code is vectorisable
+- The idea behind the solution is calculating the sum vertically.
+  if we calculate the sum by doing multiplication and adding it to
+  itself, we can definitely just do this 4 at a time. The issue at the
+  end is needing to sum up the 4 lanes at the end, which I do using
+  an efficient hsum approach by utilizing SSE3. It can also be done
+  using 2 hadd's on itself and _mm_cvtss_f32 call.
+- A postloop is required since the size is not guarnateed to be divisible
+  by 4.
+#+BEGIN_SRC c
+// efficient approach for calculating horizontal sum of vector in SSE3
+static inline float hsum(__m128 v4) {
+    __m128 shuf = _mm_movehdup_ps(v4);
+    __m128 sums = _mm_add_ps(v4, shuf);
+    shuf = _mm_movehl_ps(shuf,sums);
+    sums = _mm_add_ss(sums, shuf);
+    return _mm_cvtss_f32(sums);
+}
+
+float dot_product(float* restrict a, float* restrict b, int size) {
+    const int size_minus_three = size - 3;
+    __m128 v4sum = _mm_setzero_ps();
+    int i;
+    for (i = 0; i < size_minus_three; i+=4) {
+        __m128 v4a = _mm_loadu_ps(a+i);
+        __m128 v4b = _mm_loadu_ps(b+i);
+        __m128 v4a_mul_v4b = _mm_mul_ps(v4a, v4b);
+        v4sum = _mm_add_ps(v4sum, v4a_mul_v4b);
+    }
+    float sum = hsum(v4sum);
+    // postloop
+    // i = i;
+    for (; i < size; i++) {
+        sum = sum + a[i] * b[i];
+    }
+    return sum;
+}
+#+END_SRC
+
+* 2015 Q1
+** Part b
+*** Code Segment 1
+- This code is not vectorisable,
+- Each iteration requires the previous iterations
+  computation, if we were to use SSE vecotrization
+  we would be doing computation 4 at a time and
+  4 out of the 3 lanes will have an incorrect value.
+*** Code Segment 2
+- This code nearly identically is exactly to the question
+  from 2016 Q1 part c code segment 2
+- This code is vectorisable
+- Same explanation as seen in 2016 Q1 part c code segment 2
+  apart from the requirements of needing a postloop
+#+BEGIN_SRC c
+// efficient approach for calculating horizontal sum of vector in SSE3
+static inline float hsum(__m128 v4) {
+    __m128 shuf = _mm_movehdup_ps(v4);
+    __m128 sums = _mm_add_ps(v4, shuf);
+    shuf = _mm_movehl_ps(shuf,sums);
+    sums = _mm_add_ss(sums, shuf);
+    return _mm_cvtss_f32(sums);
+}
+
+float dot_product(float* restrict a, float* restrict b) {
+    __m128 v4sum = _mm_setzero_ps();
+    int i;
+    for (i = 0; i < 4096; i+=4) { // 4096 % 4, no need for postloop
+        __m128 v4a = _mm_loadu_ps(a+i);
+        __m128 v4b = _mm_loadu_ps(b+i);
+        __m128 v4a_mul_v4b = _mm_mul_ps(v4a, v4b);
+        v4sum = _mm_add_ps(v4sum, v4a_mul_v4b);
+    }
+    return hsum(v4sum);
+}
+#+END_SRC
+
+*** Code Segment 3
+- This code and explanation is identical to
+  2016 Q1 part c code segment 2017 Q1 part b code segment 3

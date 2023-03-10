@@ -23,3 +23,7 @@ Exam papers can be found in https://cs-exams.com/docs/third-year
 [Input and Output](./Functional-Programming/IO)  
 [Laziness and Strictness](./Functional-Programming/Lazy-Strict)  
 [Abstract Syntax Tree - AST](./Functional-Programming/AST)  
+
+### Concurrent Systems 1
+
+[SSE](./Concurrent-Systems/SSE)
