@@ -26,4 +26,4 @@ Exam papers can be found in https://cs-exams.com/docs/third-year
 
 ### Concurrent Systems 1
 
-[SSE](./Concurrent-Systems/SSE)
+[SSE](./Concurrent-Systems/)
