@@ -311,59 +311,6 @@ float Q1_routine_6(float * restrict a, int size) {
     return x * y * z;
 }
 
-/*
-float Q1_vectorized_6(float * restrict a, int size) {
-    __m128 x = _mm_setzero_ps();
-    __m128 y = _mm_setzero_ps();
-    __m128 z = _mm_setzero_ps();
-    for (int i = 0; i < size; i += 12) {
-        __m128 a1 = _mm_load_ps(&a[i]);
-        __m128 a2 = _mm_load_ps(&a[i+4]);
-        __m128 a3 = _mm_load_ps(&a[i+8]);
-        x = _mm_add_ps(x, a1);
-        y = _mm_add_ps(y, a2);
-        z = _mm_add_ps(z, a3);
-    }
-    float x_array[4], y_array[4], z_array[4];
-    _mm_store_ps(x_array, x);
-    _mm_store_ps(y_array, y);
-    _mm_store_ps(z_array, z);
-    float x_final = x_array[0] + x_array[1] + x_array[2] + x_array[3];
-    float y_final = y_array[0] + y_array[1] + y_array[2] + y_array[3];
-    float z_final = z_array[0] + z_array[1] + z_array[2] + z_array[3];
-    return x_final * y_final * z_final;
-}
-*/
-
-/*
-// in the following size is a positive value that is a multiple of 3
-float Q1_vectorized_6(float * restrict a, int size) {
-    int i;
-    int size_minus_eight = size - 11; // optimized out size for "for loop"
-    __m128 vf32_acc = _mm_setzero_ps(); // accumulator
-    for (i = 0; i < size_minus_eight; i+=12) { // more unlooped
-        __m128 vf32_a = _mm_loadu_ps(&a[i]);
-        __m128 vf32_a_plus_three = _mm_loadu_ps(&a[i+3]);
-        __m128 vf32_a_plus_six = _mm_loadu_ps(&a[i+6]);
-        __m128 vf32_a_plus_nine = _mm_loadu_ps(&a[i+9]);
-        vf32_acc = _mm_add_ps(vf32_acc, vf32_a);
-        vf32_acc = _mm_add_ps(vf32_acc, vf32_a_plus_three);
-        vf32_acc = _mm_add_ps(vf32_acc, vf32_a_plus_six);
-        vf32_acc = _mm_add_ps(vf32_acc, vf32_a_plus_nine);
-    }
-    float x = _mm_cvtss_f32(vf32_acc);
-    float y = _mm_cvtss_f32(_mm_shuffle_ps(vf32_acc, vf32_acc, _MM_SHUFFLE(0, 3, 2, 1)));
-    float z = _mm_cvtss_f32(_mm_shuffle_ps(vf32_acc, vf32_acc, _MM_SHUFFLE(0, 0, 3, 2)));
-    // i = i
-    for (; i < size; i+=3) {
-        x = x + a[i];
-        y = y + a[i+1];
-        z = z + a[i+2];
-    }
-    return x * y * z;
-}
-*/
-
 /* Shorter but underutilisation implementaton 
 float Q1_vectorized_6(float * restrict a, int size) {
     int i;
