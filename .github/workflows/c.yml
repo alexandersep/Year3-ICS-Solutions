@@ -1,0 +1,16 @@
+# "C" CI for compilation testing 
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Ensure compilation of SSE Questions
+      run: make -C Concurrent-Systems/SSE all
+    - name: Ensure compilation of Sample Exam 2023
+      run: make -C Concurrent-Systems/Sample-Exam-2023 all

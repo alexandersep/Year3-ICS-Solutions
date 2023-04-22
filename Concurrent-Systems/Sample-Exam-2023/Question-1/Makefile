@@ -8,4 +8,4 @@ test: all
 	./vec
 
 clean: vec
-	rm vec
+	rm -f vec

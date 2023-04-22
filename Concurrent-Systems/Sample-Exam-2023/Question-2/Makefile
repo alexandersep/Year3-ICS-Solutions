@@ -14,4 +14,4 @@ time: all
 	./finddups 20000
 
 clean: finddups
-	rm finddups
+	rm -f finddups

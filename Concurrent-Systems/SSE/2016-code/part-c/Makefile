@@ -5,5 +5,5 @@ all: code-segments.h code-segment-1.c code-segment-2.c main.c
 run: all 
 	./main
 
-clean:
-	rm main 
+clean: main
+	rm -f main 
