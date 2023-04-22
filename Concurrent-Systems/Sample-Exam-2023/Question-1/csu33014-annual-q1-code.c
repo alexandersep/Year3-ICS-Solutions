@@ -345,11 +345,11 @@ sumx * sumy * sumz
 // in the following size is a positive value that is a multiple of 3
 float Q1_vectorized_6(float * restrict a, int size) {
     int i;
-    int size_minus_eleven = size - 11; // optimise for for loop
+    int size_minus_eleven = size - 11; // optimise for "for loop"
     __m128 vf32_sumxyzx = _mm_setzero_ps();
-    __m128 vf32_sumyzxy = _mm_setzero_ps();
-    __m128 vf32_sumzxyz = _mm_setzero_ps();
-    for (i = 0; i < size_minus_eleven; i+=12) {
+    __m128 vf32_sumyzxy = vf32_sumxyzx; // optimise _mm_setzero_ps() by loading vector already set to zero
+    __m128 vf32_sumzxyz = vf32_sumxyzx; // optimise _mm_setzero_ps() by loading vector already set to zero
+    for (i = 0; i < size_minus_eleven; i+=12) { 
         __m128 vf32_next_sumxyzx = _mm_loadu_ps(&a[i]);
         __m128 vf32_next_sumyzxy = _mm_loadu_ps(&a[i+4]);
         __m128 vf32_next_sumzxyz = _mm_loadu_ps(&a[i+8]);

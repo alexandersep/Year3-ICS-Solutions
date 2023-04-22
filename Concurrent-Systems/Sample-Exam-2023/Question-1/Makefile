@@ -6,3 +6,6 @@ debug: csu33014-annual-q1-code.c csu33014-annual-q1-code.h csu33014-annual-q1-ma
 
 test: all
 	./vec
+
+clean: vec
+	rm vec

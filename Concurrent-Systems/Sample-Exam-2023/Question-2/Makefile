@@ -12,3 +12,6 @@ test: all
 
 time: all
 	./finddups 20000
+
+clean: finddups
+	rm finddups
