@@ -16,7 +16,8 @@ Exam papers can be found in https://cs-exams.com/docs/third-year
 ### Introduction to Functional Programming
 
 * Solutions for Proofs do not exist, they were not asked for the 2022 examination and 
-  so I do not have the solutions as of now.  
+  so I do not have the solutions as of now.
+  
 [Higher Order Functions](./Functional-Programming/HOF)  
 [Polymorphism](./Functional-Programming/Polymorphism)  
 [Monad and RunTime and PatternMatch](./Functional-Programming/Monad+RunTime+PatternMatch)  
@@ -25,6 +26,8 @@ Exam papers can be found in https://cs-exams.com/docs/third-year
 [Abstract Syntax Tree - AST](./Functional-Programming/AST)  
 
 ### Concurrent Systems 1
+
+* Openmp Solutions are not present as of now.  
 
 [SSE](./Concurrent-Systems/SSE)  
 [Sample Exam 2023](./Concurrent-Systems/Sample-Exam-2023)
