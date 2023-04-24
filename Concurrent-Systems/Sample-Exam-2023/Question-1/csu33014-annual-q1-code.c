@@ -69,29 +69,33 @@ float Q1_routine_1(float * restrict a, float * restrict b, int size) {
 
 // Fast horizonal multiplication using SSE3
 // Similar to two hadds's but with multiplying and a return lowest lane for float vectors
-static inline float hmul_ps_sse3(__m128 v4a) {
-    __m128 shuf = _mm_movehdup_ps(v4a);
-    __m128 muls = _mm_mul_ps(v4a, shuf);
-    shuf        = _mm_movehl_ps(shuf, muls);
-    muls        = _mm_mul_ss(muls, shuf);
-    return _mm_cvtss_f32(muls);
+static inline float hmul_ps_sse3(__m128 v4a) { // v4a = [1, 2, 3, 4]
+    __m128 shuf = _mm_movehdup_ps(v4a); // shuf = [2, 2, 4, 4]
+    __m128 muls = _mm_mul_ps(v4a, shuf); // muls = v4a * shuf = [2, 4, 12, 16]
+    shuf        = _mm_movehl_ps(shuf, muls); // shuf = [12, 16, 4, 4]
+    muls        = _mm_mul_ss(muls, shuf); // muls * shuf = [24, ?, ?, ?]
+    return _mm_cvtss_f32(muls); // return 24 == 1 * 2 * 3 * 4 = 24
 }
 
 // in the following, size can have any positive value
 float Q1_vectorized_1(float * restrict a, float * restrict b, int size) {
-    __m128 v4product_a = _mm_set1_ps(1.0);
-    __m128 v4product_b = _mm_set1_ps(1.0);
-    int size_minus_three = size - 3;
+    float product_a = 1.0; // if size >= 4 then postloop else useless assignment
+    float product_b = 1.0; 
     int i;  
-    for (i = 0; i < size_minus_three; i+=4) {
-        __m128 v4a = _mm_loadu_ps(&a[i]); 
-        __m128 v4b = _mm_loadu_ps(&b[i]); 
-        v4product_a = _mm_mul_ps(v4product_a, v4a);
-        v4product_b = _mm_mul_ps(v4product_b, v4b);
+    if (size >= 4) { // saves the need of using _mm_set1_ps(&a[0]) twice if condition is bad
+        __m128 v4product_a = _mm_loadu_ps(&a[0]); 
+        __m128 v4product_b = _mm_loadu_ps(&b[0]); 
+        int size_minus_three = size - 3;
+        for (i = 4; i < size_minus_three; i+=4) {
+            __m128 v4a = _mm_loadu_ps(&a[i]); 
+            __m128 v4b = _mm_loadu_ps(&b[i]); 
+            v4product_a = _mm_mul_ps(v4product_a, v4a);
+            v4product_b = _mm_mul_ps(v4product_b, v4b);
+        }
+        product_a = hmul_ps_sse3(v4product_a);
+        product_b = hmul_ps_sse3(v4product_b); 
     }
-    float product_a = hmul_ps_sse3(v4product_a); 
-    float product_b = hmul_ps_sse3(v4product_b); 
-    for (/* i = i */; i < size; i++) {
+    for (/* i = i */; i < size; i++) { // else or end or postloop
         product_a = product_a * a[i];
         product_b = product_b * b[i];
     }
@@ -143,14 +147,14 @@ void Q1_vectorized_3(float * restrict a, float * restrict b, int size) {
     int size_minus_three = size - 3; // optimized out computation for for loop
     __m128 vf32_zero = _mm_setzero_ps();
     for (i = 0; i < size_minus_three; i+=4) {
-        __m128 vf32_a = _mm_loadu_ps(&a[i]);
-        __m128 vf32_b = _mm_loadu_ps(&b[i]);
-        __m128 vf32_cmpgt = _mm_cmpgt_ps(vf32_a, vf32_b);
-        __m128 vf32_and_a_cmpgt = _mm_and_ps(vf32_a, vf32_cmpgt);
-        __m128 vf32_sub_a = _mm_sub_ps(vf32_zero, vf32_and_a_cmpgt);
-        __m128 vf32_and_a_cmple = _mm_andnot_ps(vf32_cmpgt, vf32_a); 
-        __m128 vf32_negated = _mm_or_ps(vf32_and_a_cmple, vf32_sub_a); 
-        _mm_storeu_ps(&a[i], vf32_negated);
+        __m128 vf32_a = _mm_loadu_ps(&a[i]); // [1, 2, 3, 4]
+        __m128 vf32_b = _mm_loadu_ps(&b[i]); // [-1, 0, 4, 5]
+        __m128 vf32_cmpgt = _mm_cmpgt_ps(vf32_a, vf32_b); // [0xfffff, 0xfffff, 0, 0]
+        __m128 vf32_and_a_cmpgt = _mm_and_ps(vf32_a, vf32_cmpgt); // [1, 2, 0, 0]
+        __m128 vf32_sub_a = _mm_sub_ps(vf32_zero, vf32_and_a_cmpgt); // [-1, -2, 0, 0]
+        __m128 vf32_and_a_cmple = _mm_andnot_ps(vf32_cmpgt, vf32_a); // [0, 0, 0xffff, 0xffff] -> [0, 0, 3, 4]
+        __m128 vf32_negated = _mm_or_ps(vf32_and_a_cmple, vf32_sub_a); // [-1, -2, 3, 4] 
+        _mm_storeu_ps(&a[i], vf32_negated); // a[i] == 4
     }
     for (/* i = i */; i < size; i++ ) {
         if (a[i] > b[i]) {
@@ -261,19 +265,19 @@ void Q1_vectorized_5(float * restrict a, float * restrict b, float * restrict c,
         __m128 vf32_c = _mm_loadu_ps(&c[i]);
 
         // if (a[i] > c[i]) vectors swap 
-        vf32_a = _mm_min_ps(vf32_a, vf32_c);
+        __m128 vf32_tempa = _mm_min_ps(vf32_a, vf32_c);
         vf32_c = _mm_max_ps(vf32_a, vf32_c);
 
         // if (a[i] > b[i]) vectors swap 
-        vf32_a = _mm_min_ps(vf32_a, vf32_b);
-        vf32_b = _mm_max_ps(vf32_a, vf32_b);
+        vf32_a = _mm_min_ps(vf32_tempa, vf32_b);
+        vf32_b = _mm_max_ps(vf32_tempa, vf32_b);
         
         // if (b[i] > c[i]) vectors swap 
-        vf32_b = _mm_min_ps(vf32_b, vf32_c);
+        __m128 vf32_tempb = _mm_min_ps(vf32_b, vf32_c);
         vf32_c = _mm_max_ps(vf32_b, vf32_c);
 
         _mm_storeu_ps(&a[i], vf32_a);
-        _mm_storeu_ps(&b[i], vf32_b);
+        _mm_storeu_ps(&b[i], vf32_tempb);
         _mm_storeu_ps(&c[i], vf32_c);
     }
     // i = i 
@@ -364,6 +368,8 @@ float Q1_vectorized_6(float * restrict a, int size) {
     /*                           0  1  2  3      1  2  3  0  */
     vf32_sumzxyz = _mm_shuffle_ps(vf32_sumzxyz, vf32_sumzxyz, _MM_SHUFFLE(0, 3, 2, 1));
 
+    // [x, y, z, x], [x, y, z, y], [x, y, z, z]
+    // [x, y, z, ?]
     /* Add 3 vectors that are x y z x | x y z y | x y z z and answer is in [sumx, sumy sumz, invalid] vf32_sumxyz */
     __m128 vf32_sumxyz = _mm_add_ps(vf32_sumxyzx, vf32_sumyzxy); 
     vf32_sumxyz = _mm_add_ps(vf32_sumxyz, vf32_sumzxyz); 
@@ -380,6 +386,7 @@ float Q1_vectorized_6(float * restrict a, int size) {
     /* Extract using SSE intrinsics [x, y, z, invalid] */
     x += _mm_cvtss_f32(vf32_sumxyz);
     y += _mm_cvtss_f32(_mm_shuffle_ps(vf32_sumxyz, vf32_sumxyz, _MM_SHUFFLE(0, 3, 2, 1)));
-    z += _mm_cvtss_f32(_mm_shuffle_ps(vf32_sumxyz, vf32_sumxyz, _MM_SHUFFLE(0, 0, 3, 2)));
+    z += _mm_cvtss_f32(_mm_shuffle_ps(vf32_sumxyz, vf32_sumxyz, _MM_SHUFFLE(1, 0, 3, 2)));
+
     return x * y * z;
 }
