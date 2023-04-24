@@ -225,10 +225,14 @@ void test_routine_5() {
   Q1_vectorized_5(out_vectorized, b2, c2, size);
   
   diff = diff_square(out_correct, out_vectorized, size);
+  double diff2 = diff_square(b, b2, size);
+  double diff3 = diff_square(c, c2, size);
+  fprintf(stderr, "routine5 a diff: %lf\n", diff);
+  fprintf(stderr, "routine5 b diff: %lf\n", diff2);
+  fprintf(stderr, "routine5 c diff: %lf\n", diff3);
   
   free_arrays(out_correct, out_vectorized, b, c);
   
-  fprintf(stderr, "routine5 diff: %lf\n", diff);
 }
 
 #if 0
