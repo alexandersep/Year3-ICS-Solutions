@@ -82,7 +82,7 @@ float Q1_vectorized_1(float * restrict a, float * restrict b, int size) {
     float product_a = 1.0; // if size >= 4 then postloop else useless assignment
     float product_b = 1.0; 
     int i;  
-    if (size >= 4) { // saves the need of using _mm_set1_ps(&a[0]) twice if condition is bad
+    if (size >= 4) { // saves the need of using _mm_set1_ps(a[0]) twice if condition is bad
         __m128 v4product_a = _mm_loadu_ps(&a[0]); 
         __m128 v4product_b = _mm_loadu_ps(&b[0]); 
         int size_minus_three = size - 3;
