@@ -300,6 +300,75 @@ void Q1_vectorized_5(float * restrict a, float * restrict b, float * restrict c,
     }
 }
 
+#if 0
+/* Slower by 2 latency each if statement from original code, but does not use max and min */
+void Q1_vectorized_5(float * restrict a, float * restrict b, float * restrict c, int size) {
+    int i;
+    for (i = 0; i < (size-3); i=i+4 ) {
+        __m128 vf32_a = _mm_loadu_ps(&a[i]);
+        __m128 vf32_b = _mm_loadu_ps(&b[i]);
+        __m128 vf32_c = _mm_loadu_ps(&c[i]);
+
+        // a = [1,2,3,4]; c = [2,1,2,3]
+        //( a[i] > c[i] )
+        __m128 vf32_cmpgt = _mm_cmpgt_ps(vf32_a, vf32_c);  // [0,0xf,0xf,0xf] 
+       
+        // vf32_or_a_c max values from "a" and "c"
+        __m128 vf32_cmpgt_first = _mm_and_ps(vf32_cmpgt, vf32_a); // [0,2,3,4] 
+        __m128 vf32_cmple_second = _mm_andnot_ps(vf32_cmpgt, vf32_c); // [2,0,0,0]
+        __m128 vf32_max = _mm_or_ps(vf32_cmpgt_first,vf32_cmple_second); // [2,2,3,4]
+
+        vf32_cmpgt_first = _mm_and_ps(vf32_cmpgt, vf32_c); // [0,1,2,3] 
+        vf32_cmple_second = _mm_andnot_ps(vf32_cmpgt, vf32_a); // [1,0,0,0]
+        __m128 vf32_min = _mm_or_ps(vf32_cmpgt_first,vf32_cmple_second); // [1,1,2,3]
+        
+        // a = [1,1,2,3]; b = [2,1,2,3]
+        //( a[i] > b[i] )
+        vf32_cmpgt = _mm_cmpgt_ps(vf32_min, vf32_b);  // [0,0,0,0]
+        
+        // vf32_or_a_c max values from "a" and "c"
+        vf32_cmpgt_first = _mm_and_ps(vf32_cmpgt, vf32_min); // [0,0,0,0]
+        vf32_cmple_second = _mm_andnot_ps(vf32_cmpgt, vf32_b); // [2,1,2,3]
+        __m128 vf32_max_b = _mm_or_ps(vf32_cmpgt_first,vf32_cmple_second); // [2,1,2,3]
+       
+        vf32_cmpgt_first = _mm_and_ps(vf32_cmpgt, vf32_b); // [0,1,2,3] 
+        vf32_cmple_second = _mm_andnot_ps(vf32_cmpgt, vf32_min); // [1,0,0,0]
+        _mm_storeu_ps(&a[i], _mm_or_ps(vf32_cmpgt_first,vf32_cmple_second)); // [1,1,2,3]
+        
+        // b = [2,1,2,3] c = [2,2,3,4]
+        //( b[i] > c[i] )
+        vf32_cmpgt = _mm_cmpgt_ps(vf32_max_b, vf32_max);  // [0,0,0,0]
+        
+        // vf32_or_a_c max values from "a" and "c"
+        vf32_cmpgt_first = _mm_and_ps(vf32_cmpgt, vf32_max_b); // [0,0,0,0]
+        vf32_cmple_second = _mm_andnot_ps(vf32_cmpgt, vf32_max); // [2,2,2,4] 
+        _mm_storeu_ps(&c[i], _mm_or_ps(vf32_cmpgt_first,vf32_cmple_second)); // [2,2,2,4]
+        
+        vf32_cmpgt_first = _mm_and_ps(vf32_cmpgt, vf32_max); // [0,0,0,0]
+        vf32_cmple_second = _mm_andnot_ps(vf32_cmpgt, vf32_max_b); // [2,1,2,3] 
+        _mm_storeu_ps(&b[i], _mm_or_ps(vf32_cmpgt_first,vf32_cmple_second)); // [2,1,2,3]
+    }
+    for (i=i; i < size; i++)
+    {
+        if ( a[i] > c[i] ) {
+            float temp = a[i];
+            a[i] = c[i];
+            c[i] = temp;
+        }
+        if ( a[i] > b[i] ) {
+            float temp = a[i];
+            a[i] = b[i];
+            b[i] = temp; 
+        }
+        if ( b[i] > c[i] ) {
+            float temp = b[i];
+            b[i] = c[i];
+            c[i] = temp;
+        }
+    }
+}
+#endif
+
 /********************* routine 6 ***********************/
 
 // in the following size is a positive value that is a multiple of 3
@@ -315,7 +384,8 @@ float Q1_routine_6(float * restrict a, int size) {
     return x * y * z;
 }
 
-/* Shorter but underutilisation implementaton 
+#if 0
+/* Shorter but underutilisation implementaton */
 float Q1_vectorized_6(float * restrict a, int size) {
     int i;
     __m128 vf32_acc = _mm_setzero_ps(); // accumulator
@@ -328,7 +398,7 @@ float Q1_vectorized_6(float * restrict a, int size) {
     float z = _mm_cvtss_f32(_mm_shuffle_ps(vf32_acc, vf32_acc, _MM_SHUFFLE(0, 0, 3, 2)));
     return x * y * z;
 }
-*/
+#endif
 
 /*
 sum_xyzx
