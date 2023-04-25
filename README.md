@@ -4,6 +4,7 @@ Juniour Sophister solutions to exam papers.
 Exam papers can be found in https://cs-exams.com/docs/third-year 
 
 ## Issues
+
 * If you spot any issues, consider forking this project and creating a pull request,
   I'll add the fix in when I can. 
 * If you want to contribute solutions to this repository you can as well, I'll add it
@@ -31,3 +32,9 @@ Exam papers can be found in https://cs-exams.com/docs/third-year
 
 [SSE](./Concurrent-Systems/SSE)  
 [Sample Exam 2023](./Concurrent-Systems/Sample-Exam-2023)
+
+#### LICENSE
+
+NOTE: This repository is licensed under MIT, If you use my code whether it's in an exam
+or in production, credit me and link to this repository to avoid plagiarism of my work. 
+The LICENSE is attached in the repository.
