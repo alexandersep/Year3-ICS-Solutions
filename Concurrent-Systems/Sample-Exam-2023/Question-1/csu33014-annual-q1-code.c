@@ -207,17 +207,22 @@ void Q1_vectorized_4(float * restrict a, float * restrict b, float * restrict c)
 }
 */
 
+// t0x helped with getting me a solution with 6 loads and looping 4 at a time
+// it was then improved by me (Alexander) with the loop unrolling if statement
+// and cache prediction with moving a[2047] at the end.
+// It was then later improved by Robert Gaynor, IG handle: rogob101 regarding
+// optimising two loads and using shuffles
 void Q1_vectorized_4(float * restrict a, float * restrict b, float * restrict c) {
     a[0] = b[0] * c[0];
     int i;
     for (i = 1; i < 2044; i+=4) {
         /* Load i-1, i, i+1 for 3 separate vectors */
         __m128 vf32_b_minus = _mm_loadu_ps(&b[i-1]);        
-        __m128 vf32_b = _mm_loadu_ps(&b[i]);        
         __m128 vf32_b_plus = _mm_loadu_ps(&b[i+1]);        
+        __m128 vf32_b = _mm_shuffle_ps(vf32_b_minus, vf32_b_plus, _MM_SHUFFLE(2, 1, 2, 1)); // optimise load instruction be reusing b[i-1] b[i+1] values
         __m128 vf32_c_minus = _mm_loadu_ps(&c[i-1]);        
-        __m128 vf32_c = _mm_loadu_ps(&c[i]);        
         __m128 vf32_c_plus = _mm_loadu_ps(&c[i+1]);        
+        __m128 vf32_c = _mm_shuffle_ps(vf32_c_minus, vf32_c_plus, _MM_SHUFFLE(2, 1, 2, 1)); // optimise load instruction be reusing b[i-1] b[i+1] values
         
         __m128 vf32_mul_minus = _mm_mul_ps(vf32_b_minus,vf32_c_plus);
         __m128 vf32_mul = _mm_mul_ps(vf32_b, vf32_c);
