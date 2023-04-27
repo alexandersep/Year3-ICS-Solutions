@@ -10,6 +10,10 @@
 
 #include <stdbool.h>
 
+// code-segment-1
+void compute_1(int* array, int SIZE);
+void vec_compute_1(int* array, int SIZE);
+
 // code-segment-2
 void compute_2(float* array, int SIZE, float multiplier);
 void vec_compute_2(float* array, int SIZE, float multiplier);

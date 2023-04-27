@@ -1,4 +1,4 @@
-/* Similar to Concurrent-Systems/2016-code/part-c/code-segment-1.c */ 
+/* Similar to Concurrent-Systems/SSE/2016-code/part-c/code-segment-1.c */ 
 #include <immintrin.h>
 
 // I'm assuming the function should be void since it returns nothing

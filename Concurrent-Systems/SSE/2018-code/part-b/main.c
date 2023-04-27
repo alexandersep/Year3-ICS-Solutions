@@ -15,6 +15,17 @@ double diff_square(float * a, float * b, int size) {
     return sum;
 }
 
+// compute square of dstance between two char arrays
+int int_diff_square(int * a, int * b, int size) {
+    int sum = 0.0;
+    for ( int i = 0; i < size; i++ ) {
+        int diff = a[i] - b[i];
+        //fprintf(stderr, "a[%d]: %f, b[%d]: %f\n", i, a[i], i, b[i]);
+        sum = sum + diff * diff;
+    }
+    return sum;
+}
+
 // create a copy of an existing array
 float * clone_float_array(float * src, int size) {
     float * dest = malloc(sizeof(float)*size);
@@ -22,6 +33,25 @@ float * clone_float_array(float * src, int size) {
         dest[i] = src[i];
     }
     return dest;
+}
+
+void test_code_segment_1() {
+    const int SIZE = 1027; 
+    int * array = malloc(sizeof(float) * SIZE);
+    int * clone_array = malloc(sizeof(float) * SIZE);
+    for (int i = 0; i < SIZE; i++) {
+        array[i] = rand() % SIZE;
+        clone_array[i] = array[i];
+    }
+
+    compute_1(array, SIZE);
+    vec_compute_1(clone_array, SIZE);
+
+    int diff = int_diff_square(array, clone_array, SIZE); 
+    fprintf(stderr, "compute_1 diff: %lf\n", diff);
+
+    free(array);
+    free(clone_array);
 }
 
 void test_code_segment_2() {
@@ -81,6 +111,7 @@ void test_code_segment_4() {
 int main() {
     srand(time(NULL));
     printf("Note: Floats cause small inaccuracies in certain cases\n");
+    test_code_segment_1();
     test_code_segment_2();
     test_code_segment_3();
     test_code_segment_4();
