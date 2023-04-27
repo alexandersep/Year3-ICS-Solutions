@@ -215,7 +215,7 @@ void Q1_vectorized_4(float * restrict a, float * restrict b, float * restrict c)
 void Q1_vectorized_4(float * restrict a, float * restrict b, float * restrict c) {
     a[0] = b[0] * c[0];
     int i;
-    for (i = 1; i < 2044; i+=4) {
+    for (i = 1; i < 2045; i+=4) {
         /* Load i-1, i, i+1 for 3 separate vectors */
         __m128 vf32_b_minus = _mm_loadu_ps(&b[i-1]);        
         __m128 vf32_b_plus = _mm_loadu_ps(&b[i+1]);        
