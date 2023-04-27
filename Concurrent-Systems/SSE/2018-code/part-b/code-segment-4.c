@@ -11,7 +11,9 @@ bool strcmp_4(char* string1, char* string2, int strlength) {
     return true;
 }
 
+// Fast but NaN strings will result in incorrect comparisons 
 // I'm gonna assume string[2] was a mistake and it meant string[i]
+/*
 bool vec_strcmp_4(char* string1, char* string2, int strlength) {
     int i;
     int strlength_minus_fifteen = strlength - 15;
@@ -31,9 +33,11 @@ bool vec_strcmp_4(char* string1, char* string2, int strlength) {
     }
     return true;
 }
+*/
 
-#if 0
-/* Inefficient implementation using slow string intrinsics */
+/* Correct but slower implementation using string intrinsics, this 
+ * means NaN isn't a problem like the above code as we are comparing
+ * as strings not floats */
 bool vec_strcmp_4(char* string1, char* string2, int strlength) {
     int i;
     for(i = 0; i < strlength - 15; i+=16) {
@@ -63,4 +67,3 @@ bool vec_strcmp_4(char* string1, char* string2, int strlength) {
     }
     return true;
 }
-#endif
