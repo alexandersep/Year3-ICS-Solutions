@@ -30,8 +30,7 @@ void vec_code_segment_2(float * vals) {
     __m128 vf32_calc = _mm_mul_ps(vf32_r1b, vf32_rab);
     for (int i = 0; i < 4096; i++) {
         __m128 vf32_rvals = _mm_load_ps(&vals[i]);
-        vf32_rvals = _mm_sqrt_ps(vf32_rvals);
-        vf32_rvals = _mm_div_ps(vf32_one, vf32_rvals);
+        vf32_rvals = _mm_rsqrt_ps(vf32_rvals);
         vf32_calc = _mm_add_ps(vf32_calc, vf32_rvals);
         _mm_store_ps(&vals[i], vf32_calc);
     }
