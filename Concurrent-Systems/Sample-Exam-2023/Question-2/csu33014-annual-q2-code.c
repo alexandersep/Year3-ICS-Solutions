@@ -49,7 +49,7 @@ bool * find_duplicates_parallel(char ** list_a, int size_a, char ** list_b, int 
     }
     #pragma omp parrallel for 
     for (int i = 0; i < size_a; i++) { // for each string in list_b
-        duplicates[i] = hashtable_lookup(hash_table, list_a[i]); // if in list_b hashmap then duplicate
+        duplicates[i] = hashtable_lookup(hash_table, list_a[i]); // if in list_a hashmap then duplicate
     }
     hashtable_free(hash_table); // free memory of hash_table 
     // return the array of booleans marking duplicates
