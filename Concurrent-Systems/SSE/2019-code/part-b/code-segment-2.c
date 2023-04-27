@@ -1,4 +1,4 @@
-/* Similar to Concurrent-Systems/2016-code/part-c/code-segment-2.c */
+/* Similar to Concurrent-Systems/SSE/2016-code/part-c/code-segment-2.c */
 #include <immintrin.h>
 
 float sums(float* a, int size) {
