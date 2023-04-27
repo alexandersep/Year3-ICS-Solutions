@@ -219,10 +219,10 @@ void Q1_vectorized_4(float * restrict a, float * restrict b, float * restrict c)
         /* Load i-1, i, i+1 for 3 separate vectors */
         __m128 vf32_b_minus = _mm_loadu_ps(&b[i-1]);        
         __m128 vf32_b_plus = _mm_loadu_ps(&b[i+1]);        
-        __m128 vf32_b = _mm_shuffle_ps(vf32_b_minus, vf32_b_plus, _MM_SHUFFLE(2, 1, 2, 1)); // optimise load instruction be reusing b[i-1] b[i+1] values
+        __m128 vf32_b = _mm_shuffle_ps(vf32_b_minus, vf32_b_plus, _MM_SHUFFLE(2, 1, 2, 1)); // optimise load instruction by reusing b[i-1] b[i+1] values
         __m128 vf32_c_minus = _mm_loadu_ps(&c[i-1]);        
         __m128 vf32_c_plus = _mm_loadu_ps(&c[i+1]);        
-        __m128 vf32_c = _mm_shuffle_ps(vf32_c_minus, vf32_c_plus, _MM_SHUFFLE(2, 1, 2, 1)); // optimise load instruction be reusing c[i-1] c[i+1] values
+        __m128 vf32_c = _mm_shuffle_ps(vf32_c_minus, vf32_c_plus, _MM_SHUFFLE(2, 1, 2, 1)); // optimise load instruction by reusing c[i-1] c[i+1] values
         
         __m128 vf32_mul_minus = _mm_mul_ps(vf32_b_minus,vf32_c_plus);
         __m128 vf32_mul = _mm_mul_ps(vf32_b, vf32_c);
