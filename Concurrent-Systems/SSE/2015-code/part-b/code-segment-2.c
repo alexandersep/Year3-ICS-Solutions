@@ -8,6 +8,7 @@ float dot_product(float *restrict a, float *restrict b) {
     return sum;
 }
 
+// Source: https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
 // efficient approach for calculating horizontal sum of vector in SSE3
 static inline float hsum(__m128 v4) {
     __m128 shuf = _mm_movehdup_ps(v4);

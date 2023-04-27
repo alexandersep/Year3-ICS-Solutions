@@ -67,6 +67,7 @@ float Q1_routine_1(float * restrict a, float * restrict b, int size) {
     return product_a + product_b;
 }
 
+// Source: https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
 // Fast horizonal multiplication using SSE3
 // Similar to two hadds's but with multiplying and a return lowest lane for float vectors
 static inline float hmul_ps_sse3(__m128 v4a) { // v4a = [1, 2, 3, 4]

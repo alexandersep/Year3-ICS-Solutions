@@ -12,6 +12,8 @@ float stddev(float mean, float * samples, int size) {
     return sqrt(result);
 }
 
+// Source: https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
+// Equivalent to 2 hadd's with a 32 bit lower extraction
 static inline float hsum_ps_sse3(__m128 v4a) {
     __m128 shuf = _mm_movehdup_ps(v4a);
     __m128 sums = _mm_add_ps(v4a, shuf);
