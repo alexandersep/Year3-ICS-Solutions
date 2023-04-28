@@ -246,17 +246,17 @@ void Q1_vectorized_6(float * restrict a, float * restrict b, float * restrict c)
     __m128 vf32_const_1000 = _mm_set1_ps(1000); // constant for (y * 2) part
     __m128 vf32_const_0 = _mm_setzero_ps(); // constant for a[i] = 0
     __m128 vf32_const_1 = _mm_set1_ps(1); // constant one vector
-    for (int i = 0; i < 1024; i++) { // increment by four each time, postloop not requires as 1024 % 4 == 0
-        __m128 vf32_x = _mm_load1_ps(&b[i]); // load 4 values from float b
-        __m128 vf32_y = _mm_load1_ps(&c[i]); // load 4 values from float c
-        a[i] = 0;
+    for (int i = 0; i < 1024; i+=4) { // increment by four each time, postloop not requires as 1024 % 4 == 0
+        __m128 vf32_x = _mm_loadu_ps(&b[i]); // load 4 values from float b
+        __m128 vf32_y = _mm_loadu_ps(&c[i]); // load 4 values from float c
+        _mm_storeu_ps(&a[i], vf32_const_0);
 
         for (int j = 0; j < 100; j+=4) {
             // optimise out inner for loop 
             __m128 vf32_x_mul_x = _mm_mul_ps(vf32_x, vf32_x); // vectorised (x * x) 
             __m128 vf32_y_mul_y = _mm_mul_ps(vf32_y, vf32_y); // vectorised (y * y) 
-            __m128 vf32_y_mul_const_2 = _mm_mul_ps(vf32_y, vf32_const_2); // vectorised y = (y * 2) 
             vf32_x = _mm_sub_ps(vf32_x_mul_x, vf32_y_mul_y); // vectorised x = (x * x) - (y * y) 
+            __m128 vf32_y_mul_const_2 = _mm_mul_ps(vf32_y, vf32_const_2); // vectorised y = (y * 2) 
             vf32_y = _mm_mul_ps(vf32_x, vf32_y_mul_const_2); // vectorised y = (x * y * 2) 
             __m128 vf32_cmpgt_x = _mm_cmpgt_ps(vf32_x, vf32_const_1000); // vectorised if (x > 1000)
             __m128 vf32_cmpgt_y = _mm_cmpgt_ps(vf32_y, vf32_const_1000); // vectorised if (y > 1000)
@@ -264,10 +264,10 @@ void Q1_vectorized_6(float * restrict a, float * restrict b, float * restrict c)
             __m128 vf32_and_x = _mm_and_ps(vf32_cmpgt_x, vf32_const_1);
             __m128 vf32_and_y = _mm_and_ps(vf32_cmpgt_y, vf32_const_1);
             __m128 vf32_or = _mm_or_ps(vf32_and_x, vf32_and_y);
-            vf32_or = _mm_or_ps(vf32_or, _mm_shuffle_ps(vf32_or, vf32_or, _MM_SHUFFLE(0,3,2,1))); 
-            vf32_or = _mm_or_ps(vf32_or, _mm_shuffle_ps(vf32_or, vf32_or, _MM_SHUFFLE(1,0,3,2))); 
-            vf32_or = _mm_or_ps(vf32_or, _mm_shuffle_ps(vf32_or, vf32_or, _MM_SHUFFLE(2,1,0,3))); 
-            _mm_store_ss(&a[i], vf32_or); // set vectored 4 values of a[i] to 0
+            if (_mm_movemask_ps(vf32_or)) { 
+                _mm_storeu_ps(&a[i], vf32_or); // set vectored 4 values of a[i] to 0
+                break;
+            }
         }
     } 
 }
