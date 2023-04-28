@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include "linkedlist.h"
+// Linked List is created by Alexander Sepelenco
 
 // create a new, empty linked list set
 struct linkedlist * linkedlist_new() {

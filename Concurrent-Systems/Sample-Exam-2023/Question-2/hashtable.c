@@ -1,4 +1,5 @@
 // Modified Hashtable from David Gregg, November 2020
+// Modified by Alexander Sepelenco
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
