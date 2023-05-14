@@ -1,2 +1,3 @@
 # Ignore all main executables in SSE folders
 main
+vec

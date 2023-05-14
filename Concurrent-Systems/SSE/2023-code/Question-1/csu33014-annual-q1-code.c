@@ -25,7 +25,6 @@
 
 #include <immintrin.h>
 #include <stdio.h>
-#include <xmmintrin.h>
 
 #include "csu33014-annual-q1-code.h"
 
@@ -239,7 +238,9 @@ void Q1_routine_6(float * restrict a, float * restrict b, float * restrict c) {
     }
 }
 
-// This function is incorrect, This will not be fix, fix it yourself
+#if 0
+This function is incorrect, This will not be fix, fix it yourself
+#endif
 // in the following size is a positive value that is a multiple of 3
 void Q1_vectorized_6(float * restrict a, float * restrict b, float * restrict c) {
     __m128 vf32_const_2 = _mm_set1_ps(2); // constant for (y * 2) part
